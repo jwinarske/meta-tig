@@ -1,10 +1,10 @@
 require influxdb.inc
 
-SRC_URI_armv7a = "https://dl.influxdata.com/influxdb/releases/influxdb-1.8_linux_armhf.tar.gz \
+SRC_URI_armv7a = "https://dl.influxdata.com/influxdb/releases/influxdb-${PV}_linux_armhf.tar.gz \
                   file://LICENSE"
 SRC_URI[sha256sum] = "${@bb.utils.contains('MACHINEOVERRIDES', 'armv7a', 'fdac157f02e8231e1925d8e9bc325c88b7ba55ebab2340c549ef10640dbd0cba', '', d)}"
 
-SRC_URI_x86-64 = "https://dl.influxdata.com/influxdb/releases/influxdb-1.8-static_linux_amd64.tar.gz \
+SRC_URI_x86-64 = "https://dl.influxdata.com/influxdb/releases/influxdb-${PV}-static_linux_amd64.tar.gz \
                   file://LICENSE"
 SRC_URI[sha256sum] = "${@bb.utils.contains('MACHINEOVERRIDES', 'x86-64', 'aedc5083ae2e61ef374dbde5044ec2a5b27300e73eb92ccd135e6ff9844617e2', '', d)}"
 
