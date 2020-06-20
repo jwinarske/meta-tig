@@ -1,3 +1,6 @@
+# we might try somethimg like that as well
+# https://github.com/nefethael/meta-random/tree/zeus/recipes-dbs/influxdb
+
 DESCRIPTION = "InfluxDB is an open source time series platform. This includes APIs for storing and querying data,  \
                processing it in the background for ETL or monitoring and alerting purposes, user dashboards,       \
                and visualizing and exploring the data and more.                                                    \
