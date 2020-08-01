@@ -66,7 +66,7 @@ do_install() {
 inherit systemd
 SYSTEMD_SERVICE_${PN} = "influxdb.service"
 
-# x86-64 static:
+# x86-64 static
 # ├── influx
 # ├── influxd
 # ├── influxdb.conf
