@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  lighttpd:
+    image: reliableembeddedsystems/oci-telegraf-prebuilt:latest
+    container_name: telegraf
+    ports:
+      - "8079:8000"
+    volumes:
+      - /resy-container/telegraf-prebuilt/etc/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+      - /resy-container/telegraf-prebuilt/telegraf-from-host:/telegraf-from-container
+    extra_hosts:
+      - "influxdb:192.168.42.71"
+    entrypoint: ["/bin/sh", "-c", "/etc/init.d/telegraf restart && /telegraf-from-container/wait-for-file.sh /var/log/telegraf/telegraf.log tail -f /var/log/telegraf/telegraf.log"]
+    # if you want to see logs:
+    # cd /resy-container/docker-compose/telegraf-prebuilt
+    # docker-compose logs -f -t
+    #
+    # this is how we would call it directly from docker:
+    # docker run -p ${PUBLIC_PORT}:80 --entrypoint=/bin/sh ${IMAGE_NAME} -c '/etc/init.d/lighttpd restart && tail -f /var/log/access.log'
+    #
+    # hacking telegraf.conf:
+    # replacing the default with new stuff mala:
+    # sed -i 's/^  # database = "telegraf"/database = "mala"/' telegraf.conf
+    # more advanced:
+    # sed -i "s,^  # database = \"telegraf\",database = \"$(/resy-container/telegraf/device-identity)\"," telegraf.conf
+    #
+    # run it manually:
+    # docker pull reliableembeddedsystems/oci-telegraf-prebuilt
+    #
+    # export INFLUXDB_IP=$(nslookup influx1.res.training 2> /dev/null | awk '/Address/{a=$3}END{print a}')
+    # docker run --add-host influxdb:${INFLUXDB_IP} -v /resy-container/telegraf/etc/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf -v /resy-container/telegraf/telegraf-from-host:/telegraf-from-container --interactive --tty --entrypoint=/bin/ash reliableembeddedsystems/oci-telegraf-prebuilt --login
+    #
+    # docker run --entrypoint=/bin/sh reliableembeddedsystems/oci-telegraf-prebuilt:latest -c '/usr/bin/telegraf'
+    #
