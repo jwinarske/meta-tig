@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  lighttpd:
+  telegraf:
     image: reliableembeddedsystems/oci-telegraf-prebuilt:latest
     container_name: telegraf
     ports:
@@ -15,6 +15,10 @@ services:
     # if you want to see logs:
     # cd /resy-container/docker-compose/telegraf-prebuilt
     # docker-compose logs -f -t
+    #
+    # shell in container:
+    # docker-compose exec telegraf /bin/sh
+    #
     #
     # this is how we would call it directly from docker:
     # docker run -p ${PUBLIC_PORT}:80 --entrypoint=/bin/sh ${IMAGE_NAME} -c '/etc/init.d/lighttpd restart && tail -f /var/log/access.log'
