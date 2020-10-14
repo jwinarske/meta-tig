@@ -29,6 +29,7 @@ CONTAINER_SPECIFIC_PATH="${RESY_CONTAINER}/${CONTAINER_APP}"
 # syntax:
 #task_or_package[mcdepends] = "mc:from_multiconfig:to_multiconfig:recipe_name:task_on_which_to_depend"
 do_fetch[mcdepends] = "mc:${NATIVE_MACHINE}:${CONTAINER_MACHINE}-${CONTAINER_DISTRO}:${CONTAINER_IMAGE}:do_image_complete"
+# mc:imx6q-phytec-mira-rdk-nand-resy-virt:container-arm-v7-resy-container:app-container-image-telegraf-prebuilt-oci:do_image_complete
 
 # <-- ===== multiconfig magic =====
 
