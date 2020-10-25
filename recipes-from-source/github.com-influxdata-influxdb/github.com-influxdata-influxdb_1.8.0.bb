@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=f39a8d10930fb37bd59adabb
 GO_IMPORT = "github.com/influxdata/influxdb"
 
 GOBUILDFLAGS_remove = "-buildmode=pie"
-inherit go go-mod pythonnative systemd
+inherit go go-mod python3native systemd
 BRANCH = "nobranch=1"
 SRCREV = "781490de48220d7695a05c29e5a36f550a4568f5"
 
@@ -41,5 +41,5 @@ RDEPENDS_${PN}-staticdev += "\
                              "
 RDEPENDS_${PN}-dev += "\
                        bash \
-                       python \
+                       python3 \
                        "
