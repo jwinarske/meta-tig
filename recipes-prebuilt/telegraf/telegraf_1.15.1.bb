@@ -15,7 +15,7 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/LICENSE;md5=c5d3aeddd4f7a4c4993bbdc4a41aec
 # I copied LICENSE from there to my meta data
 LICENSE = "MIT"
 
-S = "${WORKDIR}/${PN}-${PV}/"
+S = "${WORKDIR}/${PN}-${PV}"
 
 # telegraf-1.15.1_static_linux_amd64.tar.gz:
 # telegraf-1.15.1/
