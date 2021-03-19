@@ -2,7 +2,15 @@ version: '3'
 
 services:
   telegraf:
+#   network_mode: host
+#   image: reliableembeddedsystems/oci-telegraf-prebuilt:latest
+#   note: 1.17.1:
+#         inputs.ping: Old/default "exec" method segfaults #8766
+#             https://github.com/influxdata/telegraf/issues/8766
+#   image: telegraf:1.17.1
     image: reliableembeddedsystems/oci-telegraf-prebuilt:latest
+#   networks:
+#      - dockernet
     container_name: telegraf
     restart: always
 #    ports:
@@ -13,6 +21,11 @@ services:
     extra_hosts:
       - "influxdb:192.168.42.71"
     entrypoint: ["/bin/sh", "-c", "/etc/init.d/telegraf restart && /telegraf-from-container/wait-for-file.sh /var/log/telegraf/telegraf.log tail -f /var/log/telegraf/telegraf.log"]
+
+# networks:
+#  dockernet:
+#    external: true
+
     # (re)start it from systemd
     # systemctl restart docker-compose-telegraf-prebuilt
     #

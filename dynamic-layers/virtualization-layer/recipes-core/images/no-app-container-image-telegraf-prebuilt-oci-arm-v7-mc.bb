@@ -1,7 +1,7 @@
 # Copyright (C) 2020 Robert Berger <robert.berger@ReliableEmbeddedSystems.com>
 # Released under the MIT license (see COPYING.MIT for the terms)
 
-SUMMARY = "A telegraf-prebuilt container image packaged to go on the rootfs and be loaded by docker"
+SUMMARY = "A telegraf-prebuilt container to be downloaded by docker"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
@@ -11,7 +11,7 @@ inherit features_check
 
 RESY_CONTAINER = "resy-container"
 
-NATIVE_MACHINE ??= "imx6q-phytec-mira-rdk-nand-resy-virt"
+#NATIVE_MACHINE ??= "imx6q-phytec-mira-rdk-nand-resy-virt"
 
 CONTAINER_APP_SHORT="telegraf"
 CONTAINER_APP="${CONTAINER_APP_SHORT}-prebuilt"
@@ -30,13 +30,15 @@ CONTAINER_SPECIFIC_PATH="${RESY_CONTAINER}/${CONTAINER_APP}"
 
 # syntax:
 #task_or_package[mcdepends] = "mc:from_multiconfig:to_multiconfig:recipe_name:task_on_which_to_depend"
-do_fetch[mcdepends] = "mc:${NATIVE_MACHINE}:${CONTAINER_MACHINE}-${CONTAINER_DISTRO}:${CONTAINER_IMAGE}:do_image_complete"
+#do_fetch[mcdepends] = "mc:${NATIVE_MACHINE}:${CONTAINER_MACHINE}-${CONTAINER_DISTRO}:${CONTAINER_IMAGE}:do_image_complete"
 # mc:imx6q-phytec-mira-rdk-nand-resy-virt:container-arm-v7-resy-container:app-container-image-telegraf-prebuilt-oci:do_image_complete
 
 # <-- ===== multiconfig magic =====
 
+# exclude the container for now
+# file://${TOPDIR}/${CONTAINER_TAR_BZ2_PATH}/${CONTAINER_TAR_BZ2};unpack=0
+
 SRC_URI += " \
-    file://${TOPDIR}/${CONTAINER_TAR_BZ2_PATH}/${CONTAINER_TAR_BZ2};unpack=0 \
     file://docker-compose.yml \
     file://telegraf.conf \
     file://wait-for-file.sh \
@@ -45,9 +47,9 @@ SRC_URI += " \
 "
 do_install() {
 	# place container tarball in rootfs
-        install -d ${D}/${rootdir}/${CONTAINER_INSTALL_PATH}
-        install -m 0444 ${WORKDIR}/${TOPDIR}/${CONTAINER_TAR_BZ2_PATH}/${CONTAINER_TAR_BZ2} \
-                        ${D}/${rootdir}/${CONTAINER_INSTALL_PATH}/${CONTAINER_TAR_BZ2}
+        # install -d ${D}/${rootdir}/${CONTAINER_INSTALL_PATH}
+        # install -m 0444 ${WORKDIR}/${TOPDIR}/${CONTAINER_TAR_BZ2_PATH}/${CONTAINER_TAR_BZ2} \
+        #                 ${D}/${rootdir}/${CONTAINER_INSTALL_PATH}/${CONTAINER_TAR_BZ2}
 	# telegraf specific stuff - so we can have e.g. telegraf.conf - volume mounted
         install -d ${D}/${rootdir}/${CONTAINER_SPECIFIC_PATH}/etc/telegraf
         install -m 0444 ${WORKDIR}/telegraf.conf ${D}/${rootdir}/${CONTAINER_SPECIFIC_PATH}/etc/telegraf/telegraf.conf
@@ -63,7 +65,9 @@ do_install() {
            ${D}/${rootdir}/${CONTAINER_DOCKER_COMPOSE}/${CONTAINER_APP}/docker-compose.yml
 }
 
-FILES_${PN} += "/${CONTAINER_INSTALL_PATH}/${CONTAINER_TAR_BZ2} \
+# /${CONTAINER_INSTALL_PATH}/${CONTAINER_TAR_BZ2}
+
+FILES_${PN} += "\
                 /${CONTAINER_DOCKER_COMPOSE}/${CONTAINER_APP}/docker-compose.yml \
                 /${CONTAINER_SPECIFIC_PATH}/etc/telegraf/telegraf.conf \
                 /${CONTAINER_SPECIFIC_PATH}/telegraf-from-host/wait-for-file.sh \
@@ -73,11 +77,11 @@ FILES_${PN} += "/${CONTAINER_INSTALL_PATH}/${CONTAINER_TAR_BZ2} \
 # --> systemd service
 REQUIRED_DISTRO_FEATURES= "systemd"
 inherit systemd
-SYSTEMD_AUTO_ENABLE = "enable"
+# SYSTEMD_AUTO_ENABLE = "enable"
 # disable for manual testing
 # e.g. on target:
 # systemctl start docker-compose-telegraf-prebuilt
-#SYSTEMD_AUTO_ENABLE = "disable"
+SYSTEMD_AUTO_ENABLE = "disable"
 SYSTEMD_SERVICE_${PN} = "docker-compose-telegraf-prebuilt.service"
 
 SRC_URI += "file://docker-compose-telegraf-prebuilt.service"

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Robert Berger <robert.berger@ReliableEmbeddedSystems.com>
+# Copyright (C) 2021 Robert Berger <robert.berger@ReliableEmbeddedSystems.com>
 # Released under the MIT license (see COPYING.MIT for the terms)
 
 SUMMARY = "A telegraf image"
