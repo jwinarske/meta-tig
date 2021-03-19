@@ -28,6 +28,8 @@ USERADD_PARAM_${PN} += "telegraf \
 USERADD_PACKAGES = "${PN}"
 # <-- user/group
 
+inherit update-rc.d systemd
+
 do_install() {
     #${sysconfdir} = /etc
     #${bindir} = /usr/bin
@@ -79,10 +81,12 @@ do_install() {
         install -D -m 0755 ${S}/usr/lib/telegraf/scripts/init.sh ${D}${sysconfdir}/init.d/telegraf
     fi
 
-    # systemd - untested
-    if [ "${@bb.utils.contains("DISTRO_FEATURES", "systemd", "yes", "no", d)}" = "yes" ]; then
+    # Only install the script if 'systemd' is in DISTRO_FEATURES
+    # systemd
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd','true','false',d)}; then
         install -d ${D}${systemd_unitdir}/system
-	sed -i 's/User=telegraf/User=root/g' ${S}/usr/lib/telegraf/scripts/telegraf.service
+        # we have a telegraf user - so we can run it as telegraf user
+	#sed -i 's/User=telegraf/User=root/g' ${S}/usr/lib/telegraf/scripts/telegraf.service
 	install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system/telegraf.service
     fi
 
@@ -97,53 +101,25 @@ do_install() {
     install -d ${D}${localstatedir}/log/telegraf
 }
 
+# --> systemd service
+# please note, that above we already copy files depeding on sysvinit/systemd
+#REQUIRED_DISTRO_FEATURES= "systemd"
 inherit systemd
-SYSTEMD_SERVICE_${PN} = "telegraf.service"
+SYSTEMD_AUTO_ENABLE = "enable"
+# disable for manual testing
+# e.g. on target:
+# systemctl start telegraf.service
+#SYSTEMD_AUTO_ENABLE = "disable"
+SYSTEMD_PACKAGES = "${PN}"
+SYSTEMD_SERVICE_${PN} = "${PN}.service"
+# <-- systemd service
 
-# telegraf-1.15.1_static_linux_amd64.tar.gz: finally !!!!
-# telegraf-1.15.1/
-# ├── etc
-# │   ├── logrotate.d
-# │   │   └── telegraf
-# │   └── telegraf
-# │       ├── telegraf.conf
-# │       └── telegraf.d
-# ├── usr
-# │   ├── bin
-# │   │   └── telegraf
-# │   └── lib
-# │       └── telegraf
-# │           └── scripts
-# │               ├── init.sh
-# │               └── telegraf.service
-# └── var
-#     └── log
-#         └── telegraf
-
-
-# older x86-64 static:
-# └── telegraf
-#     ├── telegraf
-#     └── telegraf.conf
-
-# armv7:
-# .
-# └── telegraf
-#     ├── etc
-#     │   ├── logrotate.d
-#     │   │   └── telegraf
-#     │   └── telegraf
-#     │       ├── telegraf.conf
-#     │       └── telegraf.d
-#     ├── usr
-#     │   ├── bin
-#     │   │   └── telegraf
-#     │   └── lib
-#     │       └── telegraf
-#     │           └── scripts
-#     │               ├── init.sh
-#     │               └── telegraf.service
-#     └── var
-#         └── log
-#             └── telegraf
-
+# --> sysvinit scripts
+# please note, that above we already copy files depeding on sysvinit/systemd
+INITSCRIPT_PACKAGES = "${PN}"
+INITSCRIPT_NAME_${PN} = "${PN}"
+# script has a runlevel of: 99
+# starts in initlevels:     2 3 4 5
+# stops  in initlevels: 0 1         6
+INITSCRIPT_PARAMS_${PN} = "start 99 2 3 4 5 . stop 99 0 1 6 ."
+# <-- sysvinit scripts
