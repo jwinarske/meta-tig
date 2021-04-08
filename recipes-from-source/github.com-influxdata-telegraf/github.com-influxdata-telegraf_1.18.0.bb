@@ -12,6 +12,7 @@ GOBUILDFLAGS_append = " -modcacherw"
 inherit go go-mod
 
 BRANCH = "nobranch=1"
+# this is tag v1.18.0:
 SRCREV = "ac5c7f6a1a7402b6825857939fb02014300cb16a"
 
 SRC_URI = "\
@@ -26,12 +27,51 @@ export CGO_ENABLED="1"
 
 # custom do_compile, which is similar to building it
 # from commandline
-do_compile() {
-        ${GO} build ./cmd/telegraf
-}
+#do_compile() {
+#        ${GO} build ./cmd/telegraf
+#}
 
 # some var which will be used afterwards
 SRC_ROOT="${S}/src/${GO_IMPORT}"
+
+# custom do_compile:
+#       1. only fetch 
+#       2. fix permissions of pkg/mod/xxx directories
+#       3. modifed version of do_compile, taken from bbclass
+do_compile() {
+        # let's try not to build, but just download the stuff
+        # go -d does not build, but just download
+        ${GO} get -d github.com/influxdata/telegraf/cmd/telegraf
+
+        # --> fix permissions
+        if [ -d ${B}/pkg/mod ]; then
+        find ${B}/pkg/mod -depth -type d -name go.opencensus.io* -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name collectd.org* -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name go.starlark.net* -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name modernc.org* -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name k8s.io* -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name cloud.google.com -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name code.cloudfoundry.org -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name github.com -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name golang.org -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name golang.zx2c4.com -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name google.golang.org -exec chmod -R 755 {} \;
+        find ${B}/pkg/mod -depth -type d -name gopkg.in -exec chmod -R 755 {} \;
+        fi
+        # <-- fix permissions   
+
+        # --> this is a modified version of do_compile from the bbclass
+        export TMPDIR="${GOTMPDIR}"
+        if [ -n "${GO_INSTALL}" ]; then
+                if [ -n "${GO_LINKSHARED}" ]; then
+                        ${GO} install ${GOBUILDFLAGS} github.com/influxdata/telegraf/cmd/telegraf
+                        rm -rf ${B}/bin
+                fi
+                ${GO} install ${GO_LINKSHARED} ${GOBUILDFLAGS} github.com/influxdata/telegraf/cmd/telegraf
+        fi
+        # <-- this is a modified version of do_compile from the bbclass
+}
+
 
 do_install_append() {
 	# --> etc
@@ -43,14 +83,6 @@ do_install_append() {
         install -m 0644 ${SRC_ROOT}/etc/logrotate.d/telegraf ${D}${sysconfdir}/logrotate.d/
         install -m 0644 ${SRC_ROOT}/etc/telegraf.conf ${D}${sysconfdir}/telegraf/
 	# <-- etc
-
-        # --> telegraf exe
-        # /usr/bin
-        install -d ${D}${bindir}
-
-        # if I build it this funny way (as by hand) the exe ends up here:
-        install -m 0755 ${SRC_ROOT}/telegraf ${D}${bindir}/
-        # <-- telegraf exe
 
 	# --> sysvinit
     	# Only install the script if 'sysvinit' is in DISTRO_FEATURES
@@ -76,44 +108,38 @@ do_install_append() {
 
 	# /var - for /var/log/telegraf/telegraf.log
     	install -d ${D}${localstatedir}/log/telegraf
+
+# ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/docker/libnetwork@at@v0.8.0-dev.2.0.20181012153825-d7b61745d166/cmd/ssd/ssd.py contained in package github.com-influxdata-telegraf-staticdev requires /usr/bin/python, but no providers found in RDEPENDS_github.com-influxdata-telegraf-staticdev? [file-rdeps]
+
+         # we have python3 now and not python2, so
+         # .from /usr/bin/python --> /usr/bin/env python:
+         sed -i -e "s%/usr/bin/python*%/usr/bin/env python%g" ${D}${libdir}/go/pkg/mod/github.com/docker/libnetwork@v0.8.0-dev.2.0.20181012153825-d7b61745d166/cmd/ssd/ssd.py
+
+# ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/docker/docker@at@v17.12.0-ce-rc1.0.20200916142827-bd33bbf0497b+incompatible/contrib/init/openrc/docker.initd contained in package github.com-influxdata-telegraf-staticdev requires /sbin/openrc-run, but no providers found in RDEPENDS_github.com-influxdata-telegraf-staticdev? [file-rdeps]
+
+        # this openrc seems to be yet another init system
+        # .there seems to be even a meta layer for it
+        # .but currently I don't plan to support it, so remove references to it
+        rm -rf ${D}${libdir}/go/pkg/mod/github.com/docker/docker@v17.12.0-ce-rc1.0.20200916142827-bd33bbf0497b+incompatible/contrib/init/openrc
 }
-
-# -> fix permission issues when cleaning
-
-python do_fix_clean_trampoline() {
-    bb.build.exec_func('do_fix_clean', d)
-}
-
-do_fix_clean() {
-   # cleanall has problems to rewove some files here due to permissions
-   # this is some brute force fix
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name go.opencensus.io* -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name collectd.org* -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name go.starlark.net* -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name modernc.org* -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name k8s.io* -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name cloud.google.com -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name code.cloudfoundry.org -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name github.com -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name golang.org -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name golang.zx2c4.com -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name google.golang.org -exec chmod -R 755 {} \;
-   find ${WORKDIR}/build/pkg/mod -depth -type d -name gopkg.in -exec chmod -R 755 {} \;
-}
-
-addtask do_fix_clean_trampoline
-addtask do_fix_clean
-
-
-# looks like until populate_sysroot we are good now
-do_clean[prefuncs] += "do_fix_clean_trampoline"
-
-# <-- fix permission issues when cleaning
 
 # fix a qa issue:
 RDEPENDS_${PN}-dev += "\
                        bash \
                        "
+# fix qa issues:
+# .we might remove some tests/things to get rid 
+# .of these dependencies as well
+# .see above - end of do_install_append()
+# PTEST_ENABLED="0" - does nothing
+RDEPENDS_${PN}-staticdev += "\
+                       bash \
+                       make \
+                       perl \
+                       gawk \
+                       python3 \
+                       "
+
 # --> we need a more complete ps for init script
 RDEPENDS_${PN} += "procps"
 # <-- we need a more complete ps for init script
@@ -160,3 +186,9 @@ INITSCRIPT_NAME_${PN} = "telegraf"
 # stops  in initlevels: 0 1         6
 INITSCRIPT_PARAMS_${PN} = "start 99 2 3 4 5 . stop 99 0 1 6 ."
 # <-- sysvinit scripts
+
+### temporarily only for license experiments begin
+# --> license detector
+# do_devshell[depends] += "github.com-google-go-license-detector-native:do_populate_sysroot"
+# <-- license detector
+### temporarily only for license experiments end
