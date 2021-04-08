@@ -7,7 +7,8 @@ GO_IMPORT = "github.com/influxdata/influxdb"
 GOBUILDFLAGS_remove = "-buildmode=pie"
 inherit go go-mod python3native systemd
 BRANCH = "nobranch=1"
-SRCREV = "781490de48220d7695a05c29e5a36f550a4568f5"
+# this is the 1.8.4 tag:
+SRCREV = "bc8ec4384eed25436d31045f974bf39f3310fa3c"
 
 SRC_URI = "git://github.com/influxdata/influxdb;${BRANCH};protocol=https;destsuffix=${BPN}-${PV}/src/${GO_IMPORT} \
            file://influxdb.service \
