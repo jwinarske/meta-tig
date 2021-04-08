@@ -2,7 +2,7 @@ DESCRIPTION = "InfluxDB"
 SUMMARY = "InfluxDB is a time series database designed to handle high write and query loads."
 HOMEPAGE = "https://www.influxdata.com/products/influxdb-overview/"
 
-INSANE_SKIP_${PN}_append = "already-stripped"
+INSANE_SKIP_${PN}_append = " already-stripped"
 
 do_install() {
     #${sysconfdir} = /etc
