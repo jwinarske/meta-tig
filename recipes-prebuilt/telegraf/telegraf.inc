@@ -2,7 +2,7 @@ DESCRIPTION = "Telegraf"
 SUMMARY = "Telegraf is the open source server agent to help you collect metrics from your stacks, sensors and systems."
 HOMEPAGE = "https://www.influxdata.com/time-series-platform/telegraf/"
 
-INSANE_SKIP_${PN}_append = "already-stripped"
+INSANE_SKIP_${PN}_append = " already-stripped"
 
 # --> we need a more complete ps for init script
 RDEPENDS_${PN} += "procps"

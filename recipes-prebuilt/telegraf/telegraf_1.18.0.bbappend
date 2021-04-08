@@ -14,3 +14,13 @@ if [ -f ${WORKDIR}/telegraf.conf ]; then
    cp ${WORKDIR}/telegraf.conf ${D}${sysconfdir}/telegraf/
 fi
 }
+
+### temporarily only for license experiments begin
+# --> license detector - does not work - needs pkgs
+# do_devshell[depends] += "github.com-google-go-license-detector-native:do_populate_sysroot"
+# <-- license detector
+### temporarily only for license experiments end
+
+
+
+
