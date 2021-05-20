@@ -20,9 +20,28 @@ GROUPADD_PARAM_${PN} = "--system telegraf"
 # --gid GROUP               name or ID of the primary group of the new
 #                           account
 USERADD_PARAM_${PN} += "telegraf \
-                        --system \
-                        --gid telegraf \
-                       "
+--system \
+--no-create-home \
+--home-dir /var/run/${BPN} \
+--shell /bin/false \
+--gid telegraf \
+"
+##########################################################
+# e.g.
+#
+# id telegraf
+# uid=997(telegraf) gid=996(telegraf) groups=996(telegraf)
+#
+# cat /etc/group | grep telegraf
+# telegraf:x:996:
+#
+# cat /etc/passwd | grep telegraf
+# telegraf:x:997:996::/var/run/telegraf:/bin/false
+#
+# cat /etc/shadow | grep telegraf
+# telegraf:!:18766:0:99999:7:::
+##########################################################
+
 # USERADD_PACKAGES specifies the output packages
 # which include custom users/groups.
 USERADD_PACKAGES = "${PN}"
@@ -75,6 +94,10 @@ do_install() {
     if ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','true','false',d)}; then
         install -d ${D}${sysconfdir}/init.d/
         sed -i 's,#! /usr/bin/env bash,#! /bin/sh,g' ${S}/usr/lib/telegraf/scripts/init.sh
+        # SIGTERM -> TERM
+        sed -i 's,SIGTERM, TERM,g' ${S}/usr/lib/telegraf/scripts/init.sh
+        # SIGHUP -> HUP
+        sed -i 's,SIGHUP, HUP,g' ${S}/usr/lib/telegraf/scripts/init.sh
 	# @@@TODO: create telegraf user/group and don't replace by root
 	#sed -i 's/USER=telegraf/USER=root/g' ${S}/usr/lib/telegraf/scripts/init.sh
 	#sed -i 's/GROUP=telegraf/GROUP=root/g' ${S}/usr/lib/telegraf/scripts/init.sh
@@ -98,7 +121,9 @@ do_install() {
     #install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${libdir}/telegraf/scripts/
     fi
     # /var - for /var/log/telegraf/telegraf.log
-    install -d ${D}${localstatedir}/log/telegraf
+    # for some reason for DISTRO=venus the install does not work - exclude it
+    ${@ bb.utils.contains("DISTRO", "venus", "", "install -d ${D}${localstatedir}/log/telegraf", d)}
+    #install -d ${D}${localstatedir}/log/telegraf
 }
 
 # --> systemd service
