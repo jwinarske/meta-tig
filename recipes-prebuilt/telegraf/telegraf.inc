@@ -87,39 +87,28 @@ do_install() {
 
     # /usr/lib
     if [ -d ${S}/usr/lib ]; then
-    # only for armv7 - in older versions
+      # only for armv7 - in older versions
 
-    # Only install the script if 'sysvinit' is in DISTRO_FEATURES
-    # systemd would be the other choice
-    if ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','true','false',d)}; then
-        install -d ${D}${sysconfdir}/init.d/
-        sed -i 's,#! /usr/bin/env bash,#! /bin/sh,g' ${S}/usr/lib/telegraf/scripts/init.sh
-        # SIGTERM -> TERM
-        sed -i 's,SIGTERM, TERM,g' ${S}/usr/lib/telegraf/scripts/init.sh
-        # SIGHUP -> HUP
-        sed -i 's,SIGHUP, HUP,g' ${S}/usr/lib/telegraf/scripts/init.sh
-	# @@@TODO: create telegraf user/group and don't replace by root
-	#sed -i 's/USER=telegraf/USER=root/g' ${S}/usr/lib/telegraf/scripts/init.sh
-	#sed -i 's/GROUP=telegraf/GROUP=root/g' ${S}/usr/lib/telegraf/scripts/init.sh
-        install -D -m 0755 ${S}/usr/lib/telegraf/scripts/init.sh ${D}${sysconfdir}/init.d/telegraf
-    fi
+      # Only install the script if 'sysvinit' is in DISTRO_FEATURES
+      # systemd would be the other choice
+      if ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','true','false',d)}; then
+          install -d ${D}${sysconfdir}/init.d/
+          sed -i 's,#! /usr/bin/env bash,#! /bin/sh,g' ${S}/usr/lib/telegraf/scripts/init.sh
+          # SIGTERM -> TERM
+          sed -i 's,SIGTERM, TERM,g' ${S}/usr/lib/telegraf/scripts/init.sh
+          # SIGHUP -> HUP
+          sed -i 's,SIGHUP, HUP,g' ${S}/usr/lib/telegraf/scripts/init.sh
+          install -D -m 0755 ${S}/usr/lib/telegraf/scripts/init.sh ${D}${sysconfdir}/init.d/telegraf
+      fi
 
-    # Only install the script if 'systemd' is in DISTRO_FEATURES
-    # systemd
-    if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd','true','false',d)}; then
-        install -d ${D}${systemd_unitdir}/system
-        # we have a telegraf user - so we can run it as telegraf user
-	#sed -i 's/User=telegraf/User=root/g' ${S}/usr/lib/telegraf/scripts/telegraf.service
-	install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system/telegraf.service
-    fi
+      # Only install the script if 'systemd' is in DISTRO_FEATURES
+      # systemd
+      if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd','true','false',d)}; then
+          install -d ${D}${systemd_unitdir}/system
+	  install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system/telegraf.service
+      fi
+    fi # -d ${S}/usr/lib
 
-    #install -d ${D}${systemd_unitdir}/system
-    #sed -i 's/User=telegraf/User=root/g' ${S}/usr/lib/telegraf/scripts/telegraf.service
-    #install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system
-
-    #install -m 0644 ${S}/usr/lib/telegraf/scripts/init.sh ${D}${libdir}/telegraf/scripts/
-    #install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${libdir}/telegraf/scripts/
-    fi
     # /var - for /var/log/telegraf/telegraf.log
     # for some reason for DISTRO=venus the install does not work - exclude it
     ${@ bb.utils.contains("DISTRO", "venus", "", "install -d ${D}${localstatedir}/log/telegraf", d)}
@@ -128,7 +117,6 @@ do_install() {
 
 # --> systemd service
 # please note, that above we already copy files depeding on sysvinit/systemd
-#REQUIRED_DISTRO_FEATURES= "systemd"
 inherit systemd
 SYSTEMD_AUTO_ENABLE = "enable"
 # disable for manual testing
