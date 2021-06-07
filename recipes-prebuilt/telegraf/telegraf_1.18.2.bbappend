@@ -13,9 +13,18 @@ SRC_URI_append_einstein = " \
          file://telegraf.conf \
 "
 
+SRC_URI_append_beagle-bone-black = " \
+         file://telegraf.conf \
+"
+
 do_install_append () {
 if [ -f ${WORKDIR}/telegraf.conf ]; then
    cp ${WORKDIR}/telegraf.conf ${D}${sysconfdir}/telegraf/
+
+   # overwrite config file with custom config file, if it exists
+   if [ -f ${WORKDIR}/${cfg-file} ]; then
+      install -m 0644 ${WORKDIR}/${cfg-file} ${D}${sysconfdir}/telegraf/telegraf.conf
+   fi
 fi
 }
 

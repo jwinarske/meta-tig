@@ -4,6 +4,8 @@ HOMEPAGE = "https://www.influxdata.com/time-series-platform/telegraf/"
 
 INSANE_SKIP_${PN}_append = " already-stripped"
 
+SRC_URI_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://volatiles.telegraf.conf', 'file://volatiles.99_telegraf', d)}"
+
 # --> we need a more complete ps for init script
 RDEPENDS_${PN} += "procps"
 # <-- we need a more complete ps for init script
@@ -87,7 +89,7 @@ do_install() {
 
     # /usr/lib
     if [ -d ${S}/usr/lib ]; then
-      # only for armv7 - in older versions
+      # only for armv7 - in older versions?
 
       # Only install the script if 'sysvinit' is in DISTRO_FEATURES
       # systemd would be the other choice
@@ -99,6 +101,10 @@ do_install() {
           # SIGHUP -> HUP
           sed -i 's,SIGHUP, HUP,g' ${S}/usr/lib/telegraf/scripts/init.sh
           install -D -m 0755 ${S}/usr/lib/telegraf/scripts/init.sh ${D}${sysconfdir}/init.d/telegraf
+
+          # volatile log files
+          install -d ${D}${sysconfdir}/default/volatiles
+          install -m 644 ${WORKDIR}/volatiles.99_telegraf ${D}${sysconfdir}/default/volatiles/99_telegraf
       fi
 
       # Only install the script if 'systemd' is in DISTRO_FEATURES
@@ -106,12 +112,16 @@ do_install() {
       if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd','true','false',d)}; then
           install -d ${D}${systemd_unitdir}/system
 	  install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system/telegraf.service
+
+           # volatile log files
+           install -d ${D}${sysconfdir}/tmpfiles.d
+           install -m 644 ${WORKDIR}/volatiles.telegraf.conf ${D}${sysconfdir}/tmpfiles.d/telegraf.conf
       fi
     fi # -d ${S}/usr/lib
 
     # /var - for /var/log/telegraf/telegraf.log
     # for some reason for DISTRO=venus the install does not work - exclude it
-    ${@ bb.utils.contains("DISTRO", "venus", "", "install -d ${D}${localstatedir}/log/telegraf", d)}
+    #${@ bb.utils.contains("DISTRO", "venus", "", "install -d ${D}${localstatedir}/log/telegraf", d)}
     #install -d ${D}${localstatedir}/log/telegraf
 }
 
