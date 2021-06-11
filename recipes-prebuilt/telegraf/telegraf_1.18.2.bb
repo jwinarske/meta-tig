@@ -19,6 +19,11 @@ SRC_URI_einstein = "https://dl.influxdata.com/telegraf/releases/${BPN}-${PV}_lin
 md5sum=e86442a9174b599aaf99fff22cc224b6;\
 sha256sum=e5607606015772b88df6de098a6a061b68b47cb8d56986ce688a39af53640e47 \
                     file://LICENSE"
+
+SRC_URI_phycore-stm32mp1-2 = "https://dl.influxdata.com/telegraf/releases/${BPN}-${PV}_linux_armhf.tar.gz;\
+md5sum=e86442a9174b599aaf99fff22cc224b6;\
+sha256sum=e5607606015772b88df6de098a6a061b68b47cb8d56986ce688a39af53640e47 \
+                    file://LICENSE"
 # <-- armhf
 
 # --> amd64
