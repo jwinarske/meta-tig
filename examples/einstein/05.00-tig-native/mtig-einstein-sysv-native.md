@@ -307,3 +307,22 @@ popd
 
 Let's import it:
 
+![alt text](img/dash-1.png "grafana dash")
+
+Upload JSON file
+
+Remember from here: `/tmp/system_native_einstein-02_17_06_00_c1_20-1625236980786.json`
+
+![alt text](img/dash-2.png "grafana dash")
+
+Select the database
+
+![alt text](img/dash-3.png "grafana dash")
+
+And click "Import"
+
+![alt text](img/dash-4.png "grafana dash")
+
+And voila - play
+
+![alt text](img/dash-running-1.png "grafana dash")
