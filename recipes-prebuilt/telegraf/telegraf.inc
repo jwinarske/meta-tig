@@ -126,8 +126,9 @@ do_install() {
 }
 
 # --> systemd service
-# please note, that above we already copy files depeding on sysvinit/systemd
-inherit systemd
+# please note, that above
+#   we already copy files depeding on sysvinit/systemd
+#   we already inherited systemd
 SYSTEMD_AUTO_ENABLE = "enable"
 # disable for manual testing
 # e.g. on target:
@@ -138,7 +139,9 @@ SYSTEMD_SERVICE_${PN} = "${PN}.service"
 # <-- systemd service
 
 # --> sysvinit scripts
-# please note, that above we already copy files depeding on sysvinit/systemd
+# please note, that above
+#   we already copy files depeding on sysvinit/systemd
+#   we already inherited update-rc.d
 INITSCRIPT_PACKAGES = "${PN}"
 INITSCRIPT_NAME_${PN} = "${PN}"
 # script has a runlevel of: 99
