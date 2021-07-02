@@ -282,4 +282,13 @@ Pick InfluxDB
 
 Add the following and connect to the database
 
-![alt text](img/datasource-4.png "grafana datasource")
+- Name: einstein-02:17:06:00:c1:20_p
+- URL: http://localhost:8086
+- Database: einstein-02:17:06:00:c1:20
+
+![alt text](img/datasource-5.png "grafana datasource")
+
+Make sure you press `Save & test` and that it passes!
+
+![alt text](img/datasource-5.png "grafana datasource")
+
