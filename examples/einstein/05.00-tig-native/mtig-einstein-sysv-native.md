@@ -258,7 +258,15 @@ e.g.
 http://192.168.42.233:3000/login
 ```
 
-And you should see
+And you should see:
 
 ![alt text](img/login-1.png "grafana login")
+
+Just add `admin/admin` and press "Login".
+
+You might even add a more appropriate password in the next step - I skip this additional step for now.
+
+After logging in you should see something like this:
+
+![alt text](img/logged-in-1.png "grafana logged in")
 
