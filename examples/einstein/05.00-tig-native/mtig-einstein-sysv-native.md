@@ -290,5 +290,5 @@ Add the following and connect to the database
 
 Make sure you press `Save & test` and that it passes!
 
-![alt text](img/datasource-5.png "grafana datasource")
+![alt text](img/datasource-6.png "grafana datasource")
 
