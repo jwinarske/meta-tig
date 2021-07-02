@@ -270,3 +270,16 @@ After logging in you should see something like this:
 
 ![alt text](img/logged-in-1.png "grafana logged in")
 
+We'll need to define a data source
+
+![alt text](img/datasource-2.png "grafana datasource")
+
+![alt text](img/datasource-3.png "grafana datasource")
+
+Pick InfluxDB
+
+![alt text](img/datasource-4.png "grafana datasource")
+
+Add the following and connect to the database
+
+![alt text](img/datasource-4.png "grafana datasource")
