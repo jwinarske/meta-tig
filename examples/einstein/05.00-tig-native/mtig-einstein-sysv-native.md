@@ -270,6 +270,8 @@ After logging in you should see something like this:
 
 ![alt text](img/logged-in-1.png "grafana logged in")
 
+### Define data source
+
 We'll need to define a data source
 
 ![alt text](img/datasource-2.png "grafana datasource")
@@ -291,4 +293,17 @@ Add the following and connect to the database
 Make sure you press `Save & test` and that it passes!
 
 ![alt text](img/datasource-6.png "grafana datasource")
+
+### Add a dashboard
+
+Let's download a `json` of a ready-made dashboard:
+
+```
+[host machine]
+pushd /tmp
+wget https://gitlab.com/meta-layers/meta-virtualization-tests/-/raw/master/04-docker-compose/04.02-mtig/dashboards/system_native_einstein-02_17_06_00_c1_20/system_native_einstein-02_17_06_00_c1_20-1625236980786.json
+popd
+```
+
+Let's import it:
 
