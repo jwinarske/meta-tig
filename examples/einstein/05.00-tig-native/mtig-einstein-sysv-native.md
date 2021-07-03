@@ -2,7 +2,7 @@
 
 ## Feasibility studies
 
-Add [https://grafana.com/](Grafana) to an exisiting Yocto Project(R) based product. 
+Add [Grafana](https://grafana.com/) to an exisiting Yocto Project(R) based product. 
 
 This product did many thing right, like using Open Source meta layers which is what we will use here.
 
