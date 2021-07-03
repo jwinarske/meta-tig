@@ -2,21 +2,21 @@ require telegraf.inc
 
 # --> armhf
 SRC_URI_armv7a = "https://dl.influxdata.com/telegraf/releases/${BPN}-${PV}_linux_armhf.tar.gz;\
-sha256sum=e5607606015772b88df6de098a6a061b68b47cb8d56986ce688a39af53640e47 \
+sha256sum=c38f1975a86d0771c785aa455c086f2c0b4791d837ee6dc97330404d01aded99 \
                     file://LICENSE"
 
 SRC_URI_einstein = "https://dl.influxdata.com/telegraf/releases/${BPN}-${PV}_linux_armhf.tar.gz;\
-sha256sum=e5607606015772b88df6de098a6a061b68b47cb8d56986ce688a39af53640e47 \
+sha256sum=c38f1975a86d0771c785aa455c086f2c0b4791d837ee6dc97330404d01aded99 \
                     file://LICENSE"
 
 SRC_URI_phycore-stm32mp1-2 = "https://dl.influxdata.com/telegraf/releases/${BPN}-${PV}_linux_armhf.tar.gz;\
-sha256sum=e5607606015772b88df6de098a6a061b68b47cb8d56986ce688a39af53640e47 \
+sha256sum=c38f1975a86d0771c785aa455c086f2c0b4791d837ee6dc97330404d01aded99 \
                     file://LICENSE"
 # <-- armhf
 
 # --> amd64
 SRC_URI_x86-64 = "https://dl.influxdata.com/telegraf/releases/${BPN}-${PV}_static_linux_amd64.tar.gz;\
-sha256sum=db7dd0bf234290dcebe267aa8bf9e5c941172f443211834282c370741b908a4d \
+sha256sum=f916eddac39897cc45b0186ade8c25b2a024fa29324ed435ebc31204a8c1a807 \
                     file://LICENSE"
 # <-- amd64
 
