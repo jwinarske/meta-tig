@@ -248,7 +248,7 @@ root@einstein:~# ip addr | grep eth0
 
 ### Let's connect to it
 
-Browse to <ip-address-of-above>:3000
+Browse to ip-address-you-see-above:3000
 
 e.g.
 
