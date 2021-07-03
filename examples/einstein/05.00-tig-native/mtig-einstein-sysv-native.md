@@ -1,5 +1,7 @@
 # Objectives
 
+## Feasibility studies
+
 Add [https://grafana.com/](Grafana) to an exisiting Yocto Project(R) based product. 
 
 This product did many thing right, like using Open Source meta layers which is what we will use here.
@@ -35,7 +37,7 @@ e.g. CPU and RAM usage and feed the collected data into [https://www.influxdata.
 
 Note: You will wipe whatever is on your board!
 
-Download this image, write it to the SD card, plug it into you board and reboot.
+Download [https://www.amazon.com/clouddrive/share/IhTCg8THiYEuuz64ghyldk2VkUtAH5TsO62OxzmNltO](this) image, write it to the SD card, plug it into you board and reboot.
 
 On the serial console you should see something like that
 
