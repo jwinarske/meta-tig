@@ -26,24 +26,22 @@ USERADD_PARAM_${PN} += "grafana \
 # e.g.
 #
 # id grafana
-# uid=997(influxdb) gid=996(influxdb) groups=996(influxdb)
+# uid=996(grafana) gid=995(grafana) groups=995(grafana)
 #
 # cat /etc/group | grep grafana
-# influxdb:x:996:
+# grafana:x:995:
 #
 # cat /etc/passwd | grep grafana
-# influxdb:x:997:996::/var/run/influxdb:/bin/false
+# grafana:x:996:995::/var/run/grafana:/bin/false
 #
 # cat /etc/shadow | grep grafana
-# influxdb:!:18809:0:99999:7:::
+# grafana:!:18810:0:99999:7:::
 ##########################################################
 
 # USERADD_PACKAGES specifies the output packages
 # which include custom users/groups.
 USERADD_PACKAGES = "${PN}"
 # <-- user/group
-
-
 
 inherit update-rc.d systemd
 
