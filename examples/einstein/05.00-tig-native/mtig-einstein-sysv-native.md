@@ -37,7 +37,7 @@ e.g. CPU and RAM usage and feed the collected data into [https://www.influxdata.
 
 Note: You will wipe whatever is on your board!
 
-Download [https://www.amazon.com/clouddrive/share/IhTCg8THiYEuuz64ghyldk2VkUtAH5TsO62OxzmNltO](this) image, write it to the SD card, plug it into you board and reboot.
+Download [https://www.amazon.com/clouddrive/share/IhTCg8THiYEuuz64ghyldk2VkUtAH5TsO62OxzmNltO](this), write it to the SD card, plug it into you board and reboot.
 
 On the serial console you should see something like that
 
