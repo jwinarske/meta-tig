@@ -17,10 +17,10 @@ e.g. CPU and RAM usage and feed the collected data into [InfluxDB](https://www.i
 # Challenges
 
 - [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/), [InfluxDB](https://www.influxdata.com/products/influxdb/), [Grafana](https://grafana.com/), are written in [Go](https://golang.org/).
-  - Pretty much impossible to compile from sources with old Yocto(R) versions like the one used in the product
+  - Pretty much impossible to compile from sources with old Yocto(R) versions like the one used in the product.
   - Even if the product is updated to a newer version, like `dunfell` it's pretty hard to compile [Grafana](https://grafana.com/) since in addition to all the [Go](https://golang.org/) fun we would also need to use [yarn](https://yarnpkg.com/), which is not quite supported out of the box.
 - The existing product uses `system-v` as an init system, which I never tried with those apps before.
-- Normally I would run all this in containers, but for this experiment we'll skip this and run the apps natively, which I did not try before as well, except for [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/)
+- Normally I would run all this in containers, but for this experiment we'll skip this and run the apps natively, which I did not try before as well, except for [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/).
 
 # Solution
 
