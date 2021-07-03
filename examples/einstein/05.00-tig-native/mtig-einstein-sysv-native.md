@@ -6,25 +6,25 @@ Add [Grafana](https://grafana.com/) to an exisiting Yocto Project(R) based produ
 
 This product did many thing right, like using Open Source meta layers which is what we will use here.
 
-The product is something like [https://www.victronenergy.com/blog/2020/02/06/cerbo-gx-now-on-e-order-and-ready-for-pre-order/](this).
+The product is something like [this](https://www.victronenergy.com/blog/2020/02/06/cerbo-gx-now-on-e-order-and-ready-for-pre-order/).
 
-The relevant meta-layer is [https://github.com/victronenergy/venus](here) and the machine is calles `einstein`.
+The relevant meta-layer is [here](https://github.com/victronenergy/venus) and the machine is calles `einstein`.
 
-As an add on and in order to come up with some demo we'll also use [https://www.influxdata.com/time-series-platform/telegraf/](Telegraf) which will collect
-e.g. CPU and RAM usage and feed the collected data into [https://www.influxdata.com/products/influxdb/](InfluxDB).
+As an add on and in order to come up with some demo we'll also use [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) which will collect
+e.g. CPU and RAM usage and feed the collected data into [InfluxDB](https://www.influxdata.com/products/influxdb/).
 
 
 # Challenges
 
-- [https://www.influxdata.com/time-series-platform/telegraf/](Telegraf), [https://www.influxdata.com/products/influxdb/](InfluxDB), [https://grafana.com/](Grafana), are written in [https://golang.org/](Go).
+- [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/), [InfluxDB](https://www.influxdata.com/products/influxdb/), [Grafana](https://grafana.com/), are written in [Go](https://golang.org/).
   - Pretty much impossible to compile from sources with old Yocto(R) versions like the one used in the product
-  - Even if the product is updated to a newer version, like `dunfell` it's pretty hard to compile [https://grafana.com/](Grafana) since in addition to all the [https://golang.org/](Go) fun we would also need to use [https://yarnpkg.com/](yarn), which is not quite supported out of the box.
+  - Even if the product is updated to a newer version, like `dunfell` it's pretty hard to compile [Grafana](https://grafana.com/) since in addition to all the [Go](https://golang.org/) fun we would also need to use [yarn](https://yarnpkg.com/), which is not quite supported out of the box.
 - The existing product uses `system-v` as an init system, which I never tried with those apps before.
-- Normally I would run all this in containers, but for this experiment we'll skip this and run the apps natively, which I did not try before as well, except for [https://www.influxdata.com/time-series-platform/telegraf/](Telegraf)
+- Normally I would run all this in containers, but for this experiment we'll skip this and run the apps natively, which I did not try before as well, except for [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/)
 
 # Solution
 
-- use precompiled binaries for [https://golang.org/](Go) packages
+- use precompiled binaries for [Go](https://golang.org/) packages
   - implications
     - License Compliance
     - No compiler optimizations
@@ -37,7 +37,7 @@ e.g. CPU and RAM usage and feed the collected data into [https://www.influxdata.
 
 Note: You will wipe whatever is on your board!
 
-Download [https://www.amazon.com/clouddrive/share/IhTCg8THiYEuuz64ghyldk2VkUtAH5TsO62OxzmNltO](this), write it to the SD card, plug it into you board and reboot.
+Download [this](https://www.amazon.com/clouddrive/share/IhTCg8THiYEuuz64ghyldk2VkUtAH5TsO62OxzmNltO), write it to the SD card, plug it into you board and reboot.
 
 On the serial console you should see something like that
 
