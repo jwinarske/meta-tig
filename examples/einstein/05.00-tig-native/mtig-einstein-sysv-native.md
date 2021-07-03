@@ -195,43 +195,41 @@ Now we shuld see that telegraf feeds into the InfluxDB:
 
 ```
 [root@einstein:~#]
-root@einstein:~# cat /var/log/influxdb/influxd.log                                                                                                                                            
-ts=2021-07-02T19:20:10.681136Z lvl=info msg="InfluxDB starting" log_id=0V6ATdjG000 version=1.8.6 branch=1.8 commit=v1.8.6                                                                     
-ts=2021-07-02T19:20:10.681460Z lvl=info msg="Go runtime" log_id=0V6ATdjG000 version=go1.13.8 maxprocs=2                                                                                       
-ts=2021-07-02T19:20:10.910527Z lvl=info msg="Using data dir" log_id=0V6ATdjG000 service=store path=/var/lib/influxdb/data                                                                     
-ts=2021-07-02T19:20:10.911448Z lvl=info msg="Compaction settings" log_id=0V6ATdjG000 service=store max_concurrent_compactions=1 throughput_bytes_per_second=50331648 throughput_bytes_per_second_burst=50331648                                                                                                                                                                             
-ts=2021-07-02T19:20:10.911827Z lvl=info msg="Open store (start)" log_id=0V6ATdjG000 service=store trace_id=0V6ATecl000 op_name=tsdb_open op_event=start                                       
-ts=2021-07-02T19:20:10.912675Z lvl=info msg="Open store (end)" log_id=0V6ATdjG000 service=store trace_id=0V6ATecl000 op_name=tsdb_open op_event=end op_elapsed=0.974ms                        
-ts=2021-07-02T19:20:10.931479Z lvl=info msg="Opened service" log_id=0V6ATdjG000 service=subscriber                                                                                            
-ts=2021-07-02T19:20:10.932537Z lvl=info msg="Starting monitor service" log_id=0V6ATdjG000 service=monitor                                                                                     
-ts=2021-07-02T19:20:10.932695Z lvl=info msg="Registered diagnostics client" log_id=0V6ATdjG000 service=monitor name=build                                                                     
-ts=2021-07-02T19:20:10.932792Z lvl=info msg="Registered diagnostics client" log_id=0V6ATdjG000 service=monitor name=runtime                                                                   
-ts=2021-07-02T19:20:10.932873Z lvl=info msg="Registered diagnostics client" log_id=0V6ATdjG000 service=monitor name=network                                                                   
-ts=2021-07-02T19:20:10.932975Z lvl=info msg="Registered diagnostics client" log_id=0V6ATdjG000 service=monitor name=system                                                                    
-ts=2021-07-02T19:20:10.949883Z lvl=info msg="Starting precreation service" log_id=0V6ATdjG000 service=shard-precreation check_interval=10m advance_period=30m                                 
-ts=2021-07-02T19:20:10.950192Z lvl=info msg="Starting snapshot service" log_id=0V6ATdjG000 service=snapshot                                                                                   
-ts=2021-07-02T19:20:10.950384Z lvl=info msg="Starting continuous query service" log_id=0V6ATdjG000 service=continuous_querier                                                                 
-ts=2021-07-02T19:20:10.950551Z lvl=info msg="Starting HTTP service" log_id=0V6ATdjG000 service=httpd authentication=false                                                                     
-ts=2021-07-02T19:20:10.950667Z lvl=info msg="opened HTTP access log" log_id=0V6ATdjG000 service=httpd path=stderr                                                                             
-ts=2021-07-02T19:20:10.951295Z lvl=info msg="Listening on HTTP" log_id=0V6ATdjG000 service=httpd addr=[::]:8086 https=false                                                                   
-ts=2021-07-02T19:20:10.951647Z lvl=info msg="Starting retention policy enforcement service" log_id=0V6ATdjG000 service=retention check_interval=30m                                           
-ts=2021-07-02T19:20:10.980784Z lvl=info msg="Storing statistics" log_id=0V6ATdjG000 service=monitor db_instance=_internal db_rp=monitor interval=10s                                          
-ts=2021-07-02T19:20:10.981170Z lvl=info msg="Listening for signals" log_id=0V6ATdjG000                                                                                                        
-ts=2021-07-02T19:20:10.982388Z lvl=info msg="Sending usage statistics to usage.influxdata.com" log_id=0V6ATdjG000                                                                             
-ts=2021-07-02T19:20:15.221085Z lvl=info msg="Executing query" log_id=0V6ATdjG000 service=query query="CREATE DATABASE \"einstein-02:17:06:00:c1:20\""                                         
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:20:15 +0000] "POST /query HTTP/1.1 {'q': 'CREATE DATABASE "einstein-02:17:06:00:c1:20"'}" 200 57 "-" "Telegraf/1.18.2 Go/1.16.2" 87852624-db6a-11eb-8001-02170600c120 101939                                                                                                                                                                          
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:20:25 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" 8daf9eef-db6a-11eb-8002-02170600c120 384375                                                                                                                                                                                        
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:20:35 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" 93a57446-db6a-11eb-8003-02170600c120 133477                                                                                                                                                                                        
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:20:45 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" 999b655f-db6a-11eb-8004-02170600c120 48889                                                                                                                                                                                         
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:20:55 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" 9f92bd38-db6a-11eb-8005-02170600c120 35660                                                                                                                                                                                         
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:21:05 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" a5879d7c-db6a-11eb-8006-02170600c120 79669                                                                                                                                                                                         
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:21:15 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" ab7e40c5-db6a-11eb-8007-02170600c120 23909                                                                                                                                                                                         
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:21:25 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" b173fba7-db6a-11eb-8008-02170600c120 33910                                                                                                                                                                                         
-[httpd] 127.0.0.1 - - [02/Jul/2021:19:21:35 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.18.2 Go/1.16.2" b7695bbf-db6a-11eb-8009-02170600c120 72564                                                                                                      
+root@einstein:~# cat /var/log/influxdb/influxd.log
+ts=2021-07-03T10:05:29.441505Z lvl=info msg="InfluxDB starting" log_id=0V6y7ktG000 version=1.8.6 branch=1.8 commit=v1.8.6
+ts=2021-07-03T10:05:29.441845Z lvl=info msg="Go runtime" log_id=0V6y7ktG000 version=go1.13.8 maxprocs=2
+ts=2021-07-03T10:05:29.664113Z lvl=info msg="Using data dir" log_id=0V6y7ktG000 service=store path=/var/lib/influxdb/data
+ts=2021-07-03T10:05:29.665035Z lvl=info msg="Compaction settings" log_id=0V6y7ktG000 service=store max_concurrent_compactions=1 throughput_bytes_per_second=50331648 throughput_bytes_per_second_burst=50331648
+ts=2021-07-03T10:05:29.665306Z lvl=info msg="Open store (start)" log_id=0V6y7ktG000 service=store trace_id=0V6y7llG000 op_name=tsdb_open op_event=start
+ts=2021-07-03T10:05:29.666496Z lvl=info msg="Open store (end)" log_id=0V6y7ktG000 service=store trace_id=0V6y7llG000 op_name=tsdb_open op_event=end op_elapsed=1.203ms
+ts=2021-07-03T10:05:29.684339Z lvl=info msg="Opened service" log_id=0V6y7ktG000 service=subscriber
+ts=2021-07-03T10:05:29.684661Z lvl=info msg="Starting monitor service" log_id=0V6y7ktG000 service=monitor
+ts=2021-07-03T10:05:29.684801Z lvl=info msg="Registered diagnostics client" log_id=0V6y7ktG000 service=monitor name=build
+ts=2021-07-03T10:05:29.684903Z lvl=info msg="Registered diagnostics client" log_id=0V6y7ktG000 service=monitor name=runtime
+ts=2021-07-03T10:05:29.684986Z lvl=info msg="Registered diagnostics client" log_id=0V6y7ktG000 service=monitor name=network
+ts=2021-07-03T10:05:29.685203Z lvl=info msg="Registered diagnostics client" log_id=0V6y7ktG000 service=monitor name=system
+ts=2021-07-03T10:05:29.693582Z lvl=info msg="Starting precreation service" log_id=0V6y7ktG000 service=shard-precreation check_interval=10m advance_period=30m
+ts=2021-07-03T10:05:29.693880Z lvl=info msg="Starting snapshot service" log_id=0V6y7ktG000 service=snapshot
+ts=2021-07-03T10:05:29.694141Z lvl=info msg="Starting continuous query service" log_id=0V6y7ktG000 service=continuous_querier
+ts=2021-07-03T10:05:29.704668Z lvl=info msg="Starting HTTP service" log_id=0V6y7ktG000 service=httpd authentication=false
+ts=2021-07-03T10:05:29.704935Z lvl=info msg="opened HTTP access log" log_id=0V6y7ktG000 service=httpd path=stderr
+ts=2021-07-03T10:05:29.705591Z lvl=info msg="Listening on HTTP" log_id=0V6y7ktG000 service=httpd addr=[::]:8086 https=false
+ts=2021-07-03T10:05:29.705930Z lvl=info msg="Starting retention policy enforcement service" log_id=0V6y7ktG000 service=retention check_interval=30m
+ts=2021-07-03T10:05:29.714296Z lvl=info msg="Listening for signals" log_id=0V6y7ktG000
+ts=2021-07-03T10:05:29.743957Z lvl=info msg="Storing statistics" log_id=0V6y7ktG000 service=monitor db_instance=_internal db_rp=monitor interval=10s
+ts=2021-07-03T10:05:29.727302Z lvl=info msg="Sending usage statistics to usage.influxdata.com" log_id=0V6y7ktG000
+ts=2021-07-03T10:05:35.781393Z lvl=info msg="Executing query" log_id=0V6y7ktG000 service=query query="CREATE DATABASE \"einstein-02:17:06:00:c1:20\""
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:05:35 +0000] "POST /query HTTP/1.1 {'q': 'CREATE DATABASE "einstein-02:17:06:00:c1:20"'}" 200 57 "-" "Telegraf/1.19.0 Go/1.16.5" 35dc28b2-dbe6-11eb-8001-02170600c120 61859
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:05:47 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.19.0 Go/1.16.5" 3d220180-dbe6-11eb-8002-02170600c120 318548
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:05:57 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.19.0 Go/1.16.5" 430ec0cf-dbe6-11eb-8003-02170600c120 61639
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:06:07 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.19.0 Go/1.16.5" 490497bd-dbe6-11eb-8004-02170600c120 26109
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:06:17 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.19.0 Go/1.16.5" 4ef97a5c-dbe6-11eb-8005-02170600c120 29783
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:06:27 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.19.0 Go/1.16.5" 54f059fa-dbe6-11eb-8006-02170600c120 32803
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:06:37 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.19.0 Go/1.16.5" 5ae56540-dbe6-11eb-8007-02170600c120 71657
+[httpd] 127.0.0.1 - - [03/Jul/2021:10:06:47 +0000] "POST /write?db=einstein-02%3A17%3A06%3A00%3Ac1%3A20 HTTP/1.1 " 204 0 "-" "Telegraf/1.19.0 Go/1.16.5" 60dbdcba-dbe6-11eb-8008-02170600c120 42836
+root@einstein:~# 
 ...
 ```
-
-Please note, that I might replace e.g. Telegraf/1.18.2 with a newer version.
 
 You can see that InfluxDB is being fed with data from Telegraf.
 
