@@ -5,23 +5,26 @@ SRC_URI_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://gr
 SRC_URI_append = " file://grafana-server"
 
 # --> user/group
-inherit useradd
+#
+# !!! it looks like we need to run grafana as root !!!
+#
+#inherit useradd
 
 # create grafana group
 # --system                  create a system account
-GROUPADD_PARAM_${PN} = "--system grafana"
+#GROUPADD_PARAM_${PN} = "--system grafana"
 
 # create influxdb user
 # --system                  create a system account
 # --gid GROUP               name or ID of the primary group of the new
 #                           account
-USERADD_PARAM_${PN} += "grafana \
---system \
---no-create-home \
---home-dir /var/run/${BPN} \
---shell /bin/false \
---gid grafana \
-"
+#USERADD_PARAM_${PN} += "grafana \
+#--system \
+#--no-create-home \
+#--home-dir /var/run/${BPN} \
+#--shell /bin/false \
+#--gid grafana \
+#"
 ##########################################################
 # e.g.
 #
@@ -40,12 +43,15 @@ USERADD_PARAM_${PN} += "grafana \
 
 # USERADD_PACKAGES specifies the output packages
 # which include custom users/groups.
-USERADD_PACKAGES = "${PN}"
+#USERADD_PACKAGES = "${PN}"
 # <-- user/group
 
 inherit update-rc.d systemd
 
-do_install() {
+do_configure[noexec] = "1"
+do_compile[noexec] = "1"
+
+do_install () {
     install -d ${D}${bindir}
     install -m 0755 ${S}/bin/grafana-cli ${D}${bindir}/grafana-cli
     install -m 0755 ${S}/bin/grafana-server ${D}${bindir}/grafana-server
@@ -119,7 +125,17 @@ do_install() {
 #    	${D}${datadir}/grafana/
 }
 
-INSANE_SKIP_${PN} = "ldflags already-stripped build-deps"
+
+# the problem is not stripping, but prelink
+#INHIBIT_PACKAGE_STRIP = "1"
+#INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
+# explicitly tell do_package not to strip those files
+#INHIBIT_PACKAGE_STRIP_FILES = "${PKGD}${bindir}/grafana-cli \
+#${PKGD}${bindir}/grafana-server \
+#"
+#INSANE_SKIP_${PN} = "already-stripped"
+
+#INSANE_SKIP_${PN} = "ldflags already-stripped build-deps"
 
 # --> systemd service
 # please note, that above
@@ -143,7 +159,7 @@ INITSCRIPT_NAME_${PN} = "grafana-server"
 # script has a runlevel of: 99
 # starts in initlevels:     2 3 4 5
 # stops  in initlevels: 0 1         6
-INITSCRIPT_PARAMS_${PN} = "start 99 2 3 4 5 . stop 99 0 1 6 ."
+INITSCRIPT_PARAMS_${PN} = "start 95 2 3 4 5 . stop 95 0 1 6 ."
 # <-- sysvinit scripts
 
 #SYSTEMD_SERVICE_${PN} = "\

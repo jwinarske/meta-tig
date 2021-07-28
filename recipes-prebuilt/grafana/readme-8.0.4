@@ -1,0 +1,129 @@
+With grafana-8.0.4 and poky latest we have an interesting issue 
+
+Tested on imx6
+
+1) this is downloaded/unpacked manually
+
+that's the good executable:
+
+/tmp/from-grafana/grafana-8.0.4-v7/bin⟫ md5sum grafana-server
+c3b9dbe50945e83b1e43119397116b0c  grafana-server
+
+/tmp/from-grafana/grafana-8.0.4-v7/bin⟫ cat grafana-server.md5
+c3b9dbe50945e83b1e43119397116b0c
+
+2) WORKDIR
+
+this is still good (from the downloaded package):
+
+ls -lah ./grafana-8.0.4/bin/grafana-server
+-rwxr-xr-x 1 student student 63M Jul  1 14:45 ./grafana-8.0.4/bin/grafana-server
+
+md5sum ./grafana-8.0.4/bin/grafana-server
+c3b9dbe50945e83b1e43119397116b0c  ./grafana-8.0.4/bin/grafana-server
+
+cat ./grafana-8.0.4/bin/grafana-server.md5
+c3b9dbe50945e83b1e43119397116b0c
+
+something magical happens and this is produced and crashes:
+
+ls -lah ./package/usr/bin/grafana-server
+-rwxr-xr-x 2 student student 54M Jul  4 20:44 ./package/usr/bin/grafana-server
+
+md5sum ./packages-split/grafana/usr/bin/grafana-server
+36dfe7cc4d17d562494d0b0e266c7eba  ./packages-split/grafana/usr/bin/grafana-server
+
+Since it's smaller I guess it's stripping?
+
+3) analysis
+
+3.1) analysis
+
+it looks like things are fine until
+
+bitbake grafana -c cleanall && bitbake grafana -c do_populate_sysroot
+
+cat log.task_order 
+do_cleansstate (20238): log.do_cleansstate.20238
+do_cleanall (20239): log.do_cleanall.20239
+do_fetch (20486): log.do_fetch.20486
+do_unpack (20491): log.do_unpack.20491
+do_prepare_recipe_sysroot (20492): log.do_prepare_recipe_sysroot.20492
+do_patch (20558): log.do_patch.20558
+do_deploy_source_date_epoch (20564): log.do_deploy_source_date_epoch.20564
+do_configure (20592): log.do_configure.20592
+do_compile (20614): log.do_compile.20614
+do_install (20642): log.do_install.20642
+do_populate_sysroot (20690): log.do_populate_sysroot.20690
+
+
+
+student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ find | grep grafana-server
+./grafana-8.0.4/bin/grafana-server
+./grafana-8.0.4/bin/grafana-server.md5
+./grafana-server
+./image/etc/default/grafana-server
+./image/etc/init.d/grafana-server
+./image/usr/bin/grafana-server
+./init.d-grafana-server
+student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ md5sum ./grafana-8.0.4/bin/grafana-server
+c3b9dbe50945e83b1e43119397116b0c  ./grafana-8.0.4/bin/grafana-server
+student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ md6sum ./image/usr/bin/grafana-server
+bash: md6sum: command not found
+127 student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ md5sum ./image/usr/bin/grafana-server
+c3b9dbe50945e83b1e43119397116b0c  ./image/usr/bin/grafana-server
+student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ 
+
+3.2)
+
+so the nasty stuff happens after do_populate_sysroot
+
+let's see:
+
+bitbake grafana -c cleanall && bitbake grafana
+
+cat log.task_order 
+do_cleansstate (21040): log.do_cleansstate.21040
+do_cleanall (21041): log.do_cleanall.21041
+do_fetch (21288): log.do_fetch.21288
+do_unpack (21293): log.do_unpack.21293
+do_prepare_recipe_sysroot (21294): log.do_prepare_recipe_sysroot.21294
+do_patch (21360): log.do_patch.21360
+do_deploy_source_date_epoch (21366): log.do_deploy_source_date_epoch.21366
+do_populate_lic (21367): log.do_populate_lic.21367
+do_configure (21425): log.do_configure.21425
+do_compile (21447): log.do_compile.21447
+do_install (21475): log.do_install.21475
+do_populate_sysroot (21524): log.do_populate_sysroot.21524
+
+# --> somewhere from here
+
+do_package (21523): log.do_package.21523
+do_packagedata (22285): log.do_packagedata.22285
+do_package_write_ipk (22376): log.do_package_write_ipk.22376
+do_package_qa (22377): log.do_package_qa.22377
+
+# <-- to somewhere here
+
+in packaging?
+
+md5sum ./image/usr/bin/grafana-server
+c3b9dbe50945e83b1e43119397116b0c  ./image/usr/bin/grafana-server
+student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ md5sum ./package/usr/bin/grafana-server
+0c72526972308ddac17ff80296821ecc  ./package/usr/bin/grafana-server
+student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ md5sum ./grafana-8.0.4/bin/grafana-server
+c3b9dbe50945e83b1e43119397116b0c  ./grafana-8.0.4/bin/grafana-server
+student@e450-10:/workdir/build/imx6q-phytec-mira-rdk-nand-wic-master/tmp/work/armv7at2hf-neon-resy-linux-gnueabi/grafana/8.0.4-r0⟫ 
+
+
+3.3) solution
+
+# explicitly tell do_package not to strip those files
+INHIBIT_PACKAGE_STRIP_FILES = "${PKGD}${bindir}/grafana-cli \
+${PKGD}${bindir}/grafana-server \
+"
+
+...
+
+all this was not the problem, but "prelink"
+

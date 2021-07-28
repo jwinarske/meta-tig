@@ -8,6 +8,11 @@ file://LICENSE"
 SRC_URI_einstein = "https://dl.grafana.com/oss/release/${BPN}-${PV}.linux-armv7.tar.gz;\
 sha256sum=5e801cef79c6e92ef51d0fc7fb7330b342fc082bcf089bea68060a38206d3253 \
 file://LICENSE"
+
+SRC_URI_imx6q-phytec-mira-rdk-nand = "https://dl.grafana.com/oss/release/${BPN}-${PV}.linux-armv7.tar.gz;\
+sha256sum=5e801cef79c6e92ef51d0fc7fb7330b342fc082bcf089bea68060a38206d3253 \
+file://LICENSE"
+
 # <-- armv7
 
 # --> amd64
