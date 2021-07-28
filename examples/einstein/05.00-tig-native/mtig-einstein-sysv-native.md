@@ -29,6 +29,7 @@ e.g. CPU and RAM usage and feed the collected data into [InfluxDB](https://www.i
     - License Compliance
     - No compiler optimizations
     - harder to debug
+    - !!! prelink destroys the executables !!!
 - create users/groups/directories/init scripts and so on
 
 # Demo
