@@ -21,6 +21,10 @@ SRC_URI_append_phycore-stm32mp1-2 = " \
          file://telegraf.conf \
 "
 
+SRC_URI_append_imx6q-phytec-mira-rdk-nand = " \
+         file://telegraf.conf \
+"
+
 do_install_append () {
 if [ -f ${WORKDIR}/telegraf.conf ]; then
    cp ${WORKDIR}/telegraf.conf ${D}${sysconfdir}/telegraf/
