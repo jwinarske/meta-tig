@@ -164,5 +164,5 @@ INITSCRIPT_NAME_${PN} = "${PN}"
 # script has a runlevel of: 99
 # starts in initlevels:     2 3 4 5
 # stops  in initlevels: 0 1         6
-INITSCRIPT_PARAMS_${PN} = "start 99 2 3 4 5 . stop 99 0 1 6 ."
+INITSCRIPT_PARAMS_${PN} = "start 93 2 3 4 5 . stop 93 0 1 6 ."
 # <-- sysvinit scripts
