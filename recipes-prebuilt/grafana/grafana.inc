@@ -68,6 +68,33 @@ do_install () {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd','true','false',d)}; then
         install -d ${D}${systemd_unitdir}/system
         install -m 0644 ${WORKDIR}/grafana.service ${D}${systemd_system_unitdir}/grafana.service
+
+           # --> if we have DISTRO_FEATURE tig we want to control the startup sequence
+           # 1) influxdb
+           # 2) telegraf
+           # 3) grafana
+           if ${@bb.utils.contains('DISTRO_FEATURES', 'tig','true','false',d)}; then
+              # --> various modifications to grafana.service in order to make sure it's 3)
+              #    --> replace
+              #        this line: Wants=network-online.target
+              #        with this: #Wants=network-online.target
+              sed -i 's/Wants=network-online.target/#Wants=network-online.target/' ${D}${systemd_unitdir}/system/grafana.service
+              #    <-- replace
+              #    --> replace
+              #        this line: After=network-online.target
+              #        with this: After=network-online.target telegraf.service
+              sed -i 's/After=network-online.target/After=network-online.target telegraf.service/' ${D}${systemd_unitdir}/system/grafana.service
+              #    <-- replace
+
+              #    --> add
+              #        after this line: WantedBy=multi-user.target
+              #        this line:       Wants=network-online.target telegraf.service
+              sed -i '/^WantedBy=multi-user.target/a Wants=network-online.target telegraf.service' ${D}${systemd_unitdir}/system/grafana.service
+              #    <-- add
+              # <-- various modifications to grafana.service in order to make sure it's 3)
+           fi
+           # <-- if we have DISTRO_FEATURE tig we want to control the startup sequence
+
     fi # systemd
     
     install -d ${D}${sysconfdir}/default
