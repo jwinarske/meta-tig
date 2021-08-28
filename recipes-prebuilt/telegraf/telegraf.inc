@@ -113,9 +113,40 @@ do_install() {
           install -d ${D}${systemd_unitdir}/system
 	  install -m 0644 ${S}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system/telegraf.service
 
-           # volatile log files
-           install -d ${D}${sysconfdir}/tmpfiles.d
-           install -m 644 ${WORKDIR}/volatiles.telegraf.conf ${D}${sysconfdir}/tmpfiles.d/telegraf.conf
+           # --> if we have DISTRO_FEATURE tig we want to control the startup sequence
+           # 1) influxdb
+           # 2) telegraf
+           # 3) grafana
+           if ${@bb.utils.contains('DISTRO_FEATURES', 'tig','true','false',d)}; then
+              # --> various modifications to telegraf.service in order to make sure it's 2)
+              #    --> add
+              #        after this line: After=network.target
+              #        this line:       Before=grafana.service
+              sed -i '/^After=network.target/a Before=grafana.service' ${D}${systemd_unitdir}/system/telegraf.service
+              #    <-- add
+              #    --> replace
+              #        this line: After=network.target
+              #        with this: After=network.target influxdb.service
+              sed -i 's/After=network.target/After=network.target influxdb.service/' ${D}${systemd_unitdir}/system/telegraf.service
+              #    <-- replace
+
+              #    --> add
+              #        after this line: WantedBy=multi-user.target
+              #        this line:       Wants=influxdb.service
+              sed -i '/^WantedBy=multi-user.target/a Wants=influxdb.service' ${D}${systemd_unitdir}/system/telegraf.service
+              #    <-- add
+              #    --> replace
+              #        this line: WantedBy=multi-user.target
+              #        with this: WantedBy=multi-user.target grafana.service
+              sed -i 's/WantedBy=multi-user.target/WantedBy=multi-user.target grafana.service/' ${D}${systemd_unitdir}/system/telegraf.service
+              #    <-- replace
+              # <-- various modifications to telegraf.service in order to make sure it's 2)
+           fi
+           # <-- if we have DISTRO_FEATURE tig we want to control the startup sequence
+
+          # volatile log files
+          install -d ${D}${sysconfdir}/tmpfiles.d
+          install -m 644 ${WORKDIR}/volatiles.telegraf.conf ${D}${sysconfdir}/tmpfiles.d/telegraf.conf
       fi
     fi # -d ${S}/usr/lib
 
