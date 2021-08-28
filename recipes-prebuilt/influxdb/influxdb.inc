@@ -99,7 +99,8 @@ do_install() {
            # <-- /bin/sh instead of /bin/bash
            # --> we need /var/lib/influxdb u:influxdb/g:influxdb
            #     not sure this is the right place, we'll see when we test systemd as well
-           sed -i '/^# Max open files/i# /var/lib/influxdb dir\nVARLIBDIR=/var/lib/influxdb\nif [ ! -d "$VARLIBDIR" ]; then\n    mkdir -p $VARLIBDIR\n    chown $USER:$GROUP $VARLIBDIR\nfi\n' ${S}/usr/lib/influxdb/scripts/init.sh
+           #     I added it further down both for sys-v and influxdb, so I guess this can be removed
+           #sed -i '/^# Max open files/i# /var/lib/influxdb dir\nVARLIBDIR=/var/lib/influxdb\nif [ ! -d "$VARLIBDIR" ]; then\n    mkdir -p $VARLIBDIR\n    chown $USER:$GROUP $VARLIBDIR\nfi\n' ${S}/usr/lib/influxdb/scripts/init.sh
            # <-- we need /var/lib/influxdb u:influxdb/g:influxdb
            install -D -m 0755 ${S}/usr/lib/influxdb/scripts/init.sh ${D}${sysconfdir}/init.d/influxdb
  
@@ -117,11 +118,30 @@ do_install() {
            # we created influxdb user/group so no hacking needed here
            install -m 0644 ${S}/usr/lib/influxdb/scripts/influxdb.service ${D}${systemd_unitdir}/system/influxdb.service
 
+           # --> if we have DISTRO_FEATURE tig we want to control the startup sequence
+           # 1) influxdb
+           # 2) telegraf
+           # 3) grafana
+           if ${@bb.utils.contains('DISTRO_FEATURES', 'tig','true','false',d)}; then
+              # --> various modifications to influxdb.service in order to make sure it's 1)
+              #    --> add
+              #        after this line: After=network-online.target
+              #        this line:       Before=telegraf.service grafana.service
+              sed -i '/^After=network-online.target/a Before=telegraf.service grafana.service' ${D}${systemd_unitdir}/system/influxdb.service
+              #    <-- add
+              #    --> replace
+              #        this line: WantedBy=multi-user.target
+              #        with this: WantedBy=multi-user.target telegraf.service
+              sed -i 's/WantedBy=multi-user.target/WantedBy=multi-user.target telegraf.service/' ${D}${systemd_unitdir}/system/influxdb.service
+              #    <-- replace
+              # <-- various modifications to influxdb.service in order to make sure it's 1)
+           fi
+           # <-- if we have DISTRO_FEATURE tig we want to control the startup sequence
+
            # volatile log files
            install -d ${D}${sysconfdir}/tmpfiles.d
            install -m 644 ${WORKDIR}/volatiles.influxdb.conf ${D}${sysconfdir}/tmpfiles.d/influxdb.conf
        fi # systemd
-
 
     # only form armv7
     #install -d ${D}${systemd_unitdir}/system
@@ -136,7 +156,10 @@ do_install() {
     install -d ${D}${datadir}/man/man1
     install -m 0644 ${S}/usr/share/man/man1/* ${D}${datadir}/man/man1/
 
-    # /var/lib
+    # we need /var/lib/influxdb u:influxdb/g:influxdb
+    mkdir -p ${D}${localstatedir}/lib/influxdb
+    chown influxdb:influxdb ${D}${localstatedir}/lib/influxdb
+
     # not sure about this one /lib/influxdb??
     #install -d ${D}${localstatedir}/lib/influxdb
     #install -d ${D}${localstatedir}/log/influxdb
