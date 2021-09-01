@@ -2,9 +2,9 @@ DESCRIPTION = "Kapacitor"
 SUMMARY = "Kapacitor is a real-time streaming data processing engine."
 HOMEPAGE = "https://www.influxdata.com/time-series-platform/kapacitor/"
 
-INSANE_SKIP_${PN}_append = " already-stripped"
+INSANE_SKIP:${PN}:append = " already-stripped"
 
-FILES_${PN} += "${datadir}/*"
+FILES:${PN} += "${datadir}/*"
 
 do_install() {
     #${sysconfdir} = /etc
@@ -74,4 +74,4 @@ do_install() {
 #inherit ${@bb.utils.contains('PACKAGECONFIG', 'scripting', 'python3native', '', d)}
 
 inherit systemd
-SYSTEMD_SERVICE_${PN} = "kapacitor.service"
+SYSTEMD_SERVICE:${PN} = "kapacitor.service"

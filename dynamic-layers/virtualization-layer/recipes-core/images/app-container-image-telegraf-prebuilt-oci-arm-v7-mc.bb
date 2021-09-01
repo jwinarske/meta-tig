@@ -63,7 +63,7 @@ do_install() {
            ${D}/${rootdir}/${CONTAINER_DOCKER_COMPOSE}/${CONTAINER_APP}/docker-compose.yml
 }
 
-FILES_${PN} += "/${CONTAINER_INSTALL_PATH}/${CONTAINER_TAR_BZ2} \
+FILES:${PN} += "/${CONTAINER_INSTALL_PATH}/${CONTAINER_TAR_BZ2} \
                 /${CONTAINER_DOCKER_COMPOSE}/${CONTAINER_APP}/docker-compose.yml \
                 /${CONTAINER_SPECIFIC_PATH}/etc/telegraf/telegraf.conf \
                 /${CONTAINER_SPECIFIC_PATH}/telegraf-from-host/wait-for-file.sh \
@@ -78,13 +78,13 @@ SYSTEMD_AUTO_ENABLE = "enable"
 # e.g. on target:
 # systemctl start docker-compose-telegraf-prebuilt
 #SYSTEMD_AUTO_ENABLE = "disable"
-SYSTEMD_SERVICE_${PN} = "docker-compose-telegraf-prebuilt.service"
+SYSTEMD_SERVICE:${PN} = "docker-compose-telegraf-prebuilt.service"
 
 SRC_URI += "file://docker-compose-telegraf-prebuilt.service"
 
-FILES_${PN} += "${systemd_unitdir}/system/docker-compose-telegraf-prebuilt.service"
+FILES:${PN} += "${systemd_unitdir}/system/docker-compose-telegraf-prebuilt.service"
 
-do_install_append () {
+do_install:append () {
 	install -d ${D}${systemd_unitdir}/system
 	install -c -m 0644 ${WORKDIR}/docker-compose-telegraf-prebuilt.service ${D}${systemd_unitdir}/system
 }

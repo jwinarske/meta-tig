@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=f39a8d10930fb37bd59adabb
 
 GO_IMPORT = "github.com/influxdata/influxdb"
 
-GOBUILDFLAGS_remove = "-buildmode=pie"
+GOBUILDFLAGS:remove = "-buildmode=pie"
 inherit go go-mod python3native systemd
 BRANCH = "nobranch=1"
 # this is the 1.8.4 tag:
@@ -16,11 +16,11 @@ SRC_URI = "git://github.com/influxdata/influxdb;${BRANCH};protocol=https;destsuf
 "
 export GO111MODULE="on"
 
-do_configure_append() {
+do_configure:append() {
         sed -i -e "s%/usr/bin/python2.7.*%/usr/bin/env python2.7%g" ${S}/src/${GO_IMPORT}/build.py
 }
 
-do_install_append() {
+do_install:append() {
         if [ "${@bb.utils.contains("DISTRO_FEATURES", "systemd", "yes", "no", d)}" = "yes" ]; then
                 install -D -m 0644 ${WORKDIR}/influxdb.service ${D}${systemd_unitdir}/system/influxdb.service
         fi
@@ -29,14 +29,14 @@ do_install_append() {
         rm -rf ${D}${libdir}/go/pkg/mod/cloud.google.com/go@v0.51.0/cmd/go-cloud-debug-agent/internal/debug/elf/testdata
 }
 
-SYSTEMD_SERVICE_${PN} = "influxdb.service"
+SYSTEMD_SERVICE:${PN} = "influxdb.service"
 
-FILES_${PN} += "${GOBIN_FINAL}/*"
+FILES:${PN} += "${GOBIN_FINAL}/*"
 
-RDEPENDS_${PN}-staticdev += "\
+RDEPENDS:${PN}-staticdev += "\
                              perl \
                              "
-RDEPENDS_${PN}-dev += "\
+RDEPENDS:${PN}-dev += "\
                        bash \
                        python3 \
                        "

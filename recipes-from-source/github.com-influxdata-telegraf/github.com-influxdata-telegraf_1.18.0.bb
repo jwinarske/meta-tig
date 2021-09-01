@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=c5d3aeddd4f7a4c4993bbdc4
 GO_IMPORT = "github.com/influxdata/telegraf"
 
 # don't check out modules read only - se we can clean/cleanall
-GOBUILDFLAGS_append = " -modcacherw"
+GOBUILDFLAGS:append = " -modcacherw"
 inherit go go-mod
 
 BRANCH = "nobranch=1"
@@ -73,7 +73,7 @@ do_compile() {
 }
 
 
-do_install_append() {
+do_install:append() {
 	# --> etc
     	# /etc
     	install -d ${D}${sysconfdir}/logrotate.d
@@ -109,13 +109,13 @@ do_install_append() {
 	# /var - for /var/log/telegraf/telegraf.log
     	install -d ${D}${localstatedir}/log/telegraf
 
-# ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/docker/libnetwork@at@v0.8.0-dev.2.0.20181012153825-d7b61745d166/cmd/ssd/ssd.py contained in package github.com-influxdata-telegraf-staticdev requires /usr/bin/python, but no providers found in RDEPENDS_github.com-influxdata-telegraf-staticdev? [file-rdeps]
+# ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/docker/libnetwork@at@v0.8.0-dev.2.0.20181012153825-d7b61745d166/cmd/ssd/ssd.py contained in package github.com-influxdata-telegraf-staticdev requires /usr/bin/python, but no providers found in RDEPENDS:github.com-influxdata-telegraf-staticdev? [file-rdeps]
 
          # we have python3 now and not python2, so
          # .from /usr/bin/python --> /usr/bin/env python:
          sed -i -e "s%/usr/bin/python*%/usr/bin/env python%g" ${D}${libdir}/go/pkg/mod/github.com/docker/libnetwork@v0.8.0-dev.2.0.20181012153825-d7b61745d166/cmd/ssd/ssd.py
 
-# ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/docker/docker@at@v17.12.0-ce-rc1.0.20200916142827-bd33bbf0497b+incompatible/contrib/init/openrc/docker.initd contained in package github.com-influxdata-telegraf-staticdev requires /sbin/openrc-run, but no providers found in RDEPENDS_github.com-influxdata-telegraf-staticdev? [file-rdeps]
+# ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/docker/docker@at@v17.12.0-ce-rc1.0.20200916142827-bd33bbf0497b+incompatible/contrib/init/openrc/docker.initd contained in package github.com-influxdata-telegraf-staticdev requires /sbin/openrc-run, but no providers found in RDEPENDS:github.com-influxdata-telegraf-staticdev? [file-rdeps]
 
         # this openrc seems to be yet another init system
         # .there seems to be even a meta layer for it
@@ -124,15 +124,15 @@ do_install_append() {
 }
 
 # fix a qa issue:
-RDEPENDS_${PN}-dev += "\
+RDEPENDS:${PN}-dev += "\
                        bash \
                        "
 # fix qa issues:
 # .we might remove some tests/things to get rid 
 # .of these dependencies as well
-# .see above - end of do_install_append()
+# .see above - end of do_install:append()
 # PTEST_ENABLED="0" - does nothing
-RDEPENDS_${PN}-staticdev += "\
+RDEPENDS:${PN}-staticdev += "\
                        bash \
                        make \
                        perl \
@@ -141,7 +141,7 @@ RDEPENDS_${PN}-staticdev += "\
                        "
 
 # --> we need a more complete ps for init script
-RDEPENDS_${PN} += "procps"
+RDEPENDS:${PN} += "procps"
 # <-- we need a more complete ps for init script
 
 # --> user/group
@@ -149,13 +149,13 @@ inherit useradd
 
 # create telegraf group
 # --system                  create a system account
-GROUPADD_PARAM_${PN} = "--system telegraf"
+GROUPADD_PARAM:${PN} = "--system telegraf"
 
 # create telegraf user
 # --system                  create a system account
 # --gid GROUP               name or ID of the primary group of the new
 #                           account
-USERADD_PARAM_${PN} += "telegraf \
+USERADD_PARAM:${PN} += "telegraf \
                         --system \
                         --gid telegraf \
                        "
@@ -174,17 +174,17 @@ SYSTEMD_AUTO_ENABLE = "enable"
 # systemctl start telegraf.service
 #SYSTEMD_AUTO_ENABLE = "disable"
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "telegraf.service"
+SYSTEMD_SERVICE:${PN} = "telegraf.service"
 # <-- systemd service
 
 # --> sysvinit scripts
 # please note, that above we already copy files depeding on sysvinit/systemd
 INITSCRIPT_PACKAGES = "${PN}"
-INITSCRIPT_NAME_${PN} = "telegraf"
+INITSCRIPT_NAME:${PN} = "telegraf"
 # script has a runlevel of: 99
 # starts in initlevels:     2 3 4 5
 # stops  in initlevels: 0 1         6
-INITSCRIPT_PARAMS_${PN} = "start 99 2 3 4 5 . stop 99 0 1 6 ."
+INITSCRIPT_PARAMS:${PN} = "start 99 2 3 4 5 . stop 99 0 1 6 ."
 # <-- sysvinit scripts
 
 ### temporarily only for license experiments begin

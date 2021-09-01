@@ -2,8 +2,8 @@ DESCRIPTION = "Chronograf"
 SUMMARY = "Chronograf is the complete interface for the InfluxDB 1.x Platform"
 HOMEPAGE = "https://www.influxdata.com/time-series-platform/chronograf/"
 
-INSANE_SKIP_${PN}_append = " already-stripped"
-INSANE_SKIP_${PN}_append = " ldflags"
+INSANE_SKIP:${PN}:append = " already-stripped"
+INSANE_SKIP:${PN}:append = " ldflags"
 
 do_install() {
     #${sysconfdir} = /etc
@@ -42,4 +42,4 @@ do_install() {
 
 }
 inherit systemd
-SYSTEMD_SERVICE_${PN} = "chronograf.service"
+SYSTEMD_SERVICE:${PN} = "chronograf.service"

@@ -1,8 +1,8 @@
 DESCRIPTION = "The tool for beautiful monitoring and metric analytics & dashboards for Graphite, InfluxDB & Prometheus & More"
 
-SRC_URI_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://grafana.service', 'file://init.d-grafana-server', d)}"
+SRC_URI:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://grafana.service', 'file://init.d-grafana-server', d)}"
 
-SRC_URI_append = " file://grafana-server"
+SRC_URI:append = " file://grafana-server"
 
 # --> user/group
 #
@@ -12,13 +12,13 @@ SRC_URI_append = " file://grafana-server"
 
 # create grafana group
 # --system                  create a system account
-#GROUPADD_PARAM_${PN} = "--system grafana"
+#GROUPADD_PARAM:${PN} = "--system grafana"
 
 # create influxdb user
 # --system                  create a system account
 # --gid GROUP               name or ID of the primary group of the new
 #                           account
-#USERADD_PARAM_${PN} += "grafana \
+#USERADD_PARAM:${PN} += "grafana \
 #--system \
 #--no-create-home \
 #--home-dir /var/run/${BPN} \
@@ -160,9 +160,9 @@ do_install () {
 #INHIBIT_PACKAGE_STRIP_FILES = "${PKGD}${bindir}/grafana-cli \
 #${PKGD}${bindir}/grafana-server \
 #"
-#INSANE_SKIP_${PN} = "already-stripped"
+#INSANE_SKIP:${PN} = "already-stripped"
 
-#INSANE_SKIP_${PN} = "ldflags already-stripped build-deps"
+#INSANE_SKIP:${PN} = "ldflags already-stripped build-deps"
 
 # --> systemd service
 # please note, that above
@@ -174,7 +174,7 @@ SYSTEMD_AUTO_ENABLE = "enable"
 # systemctl start influxdb.service
 #SYSTEMD_AUTO_ENABLE = "disable"
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "${PN}.service"
+SYSTEMD_SERVICE:${PN} = "${PN}.service"
 # <-- systemd service
 
 # --> sysvinit scripts
@@ -182,23 +182,23 @@ SYSTEMD_SERVICE_${PN} = "${PN}.service"
 #   we already copy files depeding on sysvinit/systemd
 #   we already inherited update-rc.d
 INITSCRIPT_PACKAGES = "${PN}"
-INITSCRIPT_NAME_${PN} = "grafana-server"
+INITSCRIPT_NAME:${PN} = "grafana-server"
 # script has a runlevel of: 99
 # starts in initlevels:     2 3 4 5
 # stops  in initlevels: 0 1         6
-INITSCRIPT_PARAMS_${PN} = "start 95 2 3 4 5 . stop 95 0 1 6 ."
+INITSCRIPT_PARAMS:${PN} = "start 95 2 3 4 5 . stop 95 0 1 6 ."
 # <-- sysvinit scripts
 
-#SYSTEMD_SERVICE_${PN} = "\
+#SYSTEMD_SERVICE:${PN} = "\
 #    grafana.service \
 #"
 #
-#SYSTEMD_AUTO_ENABLE_${PN} = "disable"
+#SYSTEMD_AUTO_ENABLE:${PN} = "disable"
 
-FILES_${PN} += "\
+FILES:${PN} += "\
     ${sysconfdir}/grafana \
     ${sysconfdir}/default \
 "
 
 # files we only need with systemd
-FILES_${PN} += " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '${systemd_unitdir}', '', d)}"
+FILES:${PN} += " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '${systemd_unitdir}', '', d)}"

@@ -2,12 +2,12 @@ DESCRIPTION = "Telegraf"
 SUMMARY = "Telegraf is the open source server agent to help you collect metrics from your stacks, sensors and systems."
 HOMEPAGE = "https://www.influxdata.com/time-series-platform/telegraf/"
 
-INSANE_SKIP_${PN}_append = " already-stripped"
+INSANE_SKIP:${PN}:append = " already-stripped"
 
-SRC_URI_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://volatiles.telegraf.conf', 'file://volatiles.99_telegraf', d)}"
+SRC_URI:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://volatiles.telegraf.conf', 'file://volatiles.99_telegraf', d)}"
 
 # --> we need a more complete ps for init script
-RDEPENDS_${PN} += "procps"
+RDEPENDS:${PN} += "procps"
 # <-- we need a more complete ps for init script
 
 # --> user/group
@@ -15,13 +15,13 @@ inherit useradd
 
 # create telegraf group
 # --system                  create a system account
-GROUPADD_PARAM_${PN} = "--system telegraf"
+GROUPADD_PARAM:${PN} = "--system telegraf"
 
 # create telegraf user
 # --system                  create a system account
 # --gid GROUP               name or ID of the primary group of the new
 #                           account
-USERADD_PARAM_${PN} += "telegraf \
+USERADD_PARAM:${PN} += "telegraf \
 --system \
 --no-create-home \
 --home-dir /var/run/${BPN} \
@@ -166,7 +166,7 @@ SYSTEMD_AUTO_ENABLE = "enable"
 # systemctl start telegraf.service
 #SYSTEMD_AUTO_ENABLE = "disable"
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "${PN}.service"
+SYSTEMD_SERVICE:${PN} = "${PN}.service"
 # <-- systemd service
 
 # --> sysvinit scripts
@@ -174,9 +174,9 @@ SYSTEMD_SERVICE_${PN} = "${PN}.service"
 #   we already copy files depeding on sysvinit/systemd
 #   we already inherited update-rc.d
 INITSCRIPT_PACKAGES = "${PN}"
-INITSCRIPT_NAME_${PN} = "${PN}"
+INITSCRIPT_NAME:${PN} = "${PN}"
 # script has a runlevel of: 99
 # starts in initlevels:     2 3 4 5
 # stops  in initlevels: 0 1         6
-INITSCRIPT_PARAMS_${PN} = "start 94 2 3 4 5 . stop 94 0 1 6 ."
+INITSCRIPT_PARAMS:${PN} = "start 94 2 3 4 5 . stop 94 0 1 6 ."
 # <-- sysvinit scripts

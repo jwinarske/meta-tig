@@ -2,22 +2,22 @@ DESCRIPTION = "InfluxDB"
 SUMMARY = "InfluxDB is a time series database designed to handle high write and query loads."
 HOMEPAGE = "https://www.influxdata.com/products/influxdb-overview/"
 
-INSANE_SKIP_${PN}_append = " already-stripped"
+INSANE_SKIP:${PN}:append = " already-stripped"
 
-SRC_URI_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://volatiles.influxdb.conf', 'file://volatiles.99_influxdb', d)}"
+SRC_URI:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://volatiles.influxdb.conf', 'file://volatiles.99_influxdb', d)}"
 
 # --> user/group
 inherit useradd
 
 # create influxdb group
 # --system                  create a system account
-GROUPADD_PARAM_${PN} = "--system influxdb"
+GROUPADD_PARAM:${PN} = "--system influxdb"
 
 # create influxdb user
 # --system                  create a system account
 # --gid GROUP               name or ID of the primary group of the new
 #                           account
-USERADD_PARAM_${PN} += "influxdb \
+USERADD_PARAM:${PN} += "influxdb \
 --system \
 --no-create-home \
 --home-dir /var/run/${BPN} \
@@ -175,7 +175,7 @@ SYSTEMD_AUTO_ENABLE = "enable"
 # systemctl start influxdb.service
 #SYSTEMD_AUTO_ENABLE = "disable"
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "${PN}.service"
+SYSTEMD_SERVICE:${PN} = "${PN}.service"
 # <-- systemd service
 
 # --> sysvinit scripts
@@ -183,9 +183,9 @@ SYSTEMD_SERVICE_${PN} = "${PN}.service"
 #   we already copy files depeding on sysvinit/systemd
 #   we already inherited update-rc.d
 INITSCRIPT_PACKAGES = "${PN}"
-INITSCRIPT_NAME_${PN} = "${PN}"
+INITSCRIPT_NAME:${PN} = "${PN}"
 # script has a runlevel of: 99
 # starts in initlevels:     2 3 4 5
 # stops  in initlevels: 0 1         6
-INITSCRIPT_PARAMS_${PN} = "start 93 2 3 4 5 . stop 93 0 1 6 ."
+INITSCRIPT_PARAMS:${PN} = "start 93 2 3 4 5 . stop 93 0 1 6 ."
 # <-- sysvinit scripts
