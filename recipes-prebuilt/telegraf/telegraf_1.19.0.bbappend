@@ -1,27 +1,27 @@
 # telegraf version and machine specific changes:
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PV}/${MACHINE}:"
 
-SRC_URI:append_imx6ul-phytec-segin = " \
+SRC_URI:append:imx6ul-phytec-segin = " \
          file://telegraf.conf \
 "
 
-SRC_URI:append_stm32mp157c-dk2 = " \
+SRC_URI:append:stm32mp157c-dk2 = " \
          file://telegraf.conf \
 "
 
-SRC_URI:append_einstein = " \
+SRC_URI:append:einstein = " \
          file://telegraf.conf \
 "
 
-SRC_URI:append_beagle-bone-black = " \
+SRC_URI:append:beagle-bone-black = " \
          file://telegraf.conf \
 "
 
-SRC_URI:append_phycore-stm32mp1-2 = " \
+SRC_URI:append:phycore-stm32mp1-2 = " \
          file://telegraf.conf \
 "
 
-SRC_URI:append_imx6q-phytec-mira-rdk-nand = " \
+SRC_URI:append:imx6q-phytec-mira-rdk-nand = " \
          file://telegraf.conf \
 "
 
