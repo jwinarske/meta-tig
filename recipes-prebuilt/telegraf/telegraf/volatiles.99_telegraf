@@ -1,1 +1,1 @@
-d root root 0755 /var/volatile/log/telegraf none
+d telegraf telegraf 0755 /var/volatile/log/telegraf none
