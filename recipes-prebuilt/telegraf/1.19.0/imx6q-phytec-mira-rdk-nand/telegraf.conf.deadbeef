@@ -119,7 +119,7 @@
   ## The target database for metrics; will be created as needed.
   ## For UDP url endpoint database needs to be configured on server side.
   # database = "einstein-de:ad:be:ee:ee:ff"
-  database = "imx6q-phytec-mira-rdk-50:2d:f4:16:2d:bd"
+  database = "imx6q-phytec-mira-rdk-00:de:ad:be:ee:ff"
 
   namepass = ["*_native"]
 
