@@ -25,6 +25,10 @@ SRC_URI:append:imx6q-phytec-mira-rdk-nand = " \
          file://telegraf.conf \
 "
 
+SRC_URI:append:de0-nano-soc-kit = " \
+         file://telegraf.conf \
+"
+
 do_install:append () {
 if [ -f ${WORKDIR}/telegraf.conf ]; then
    cp ${WORKDIR}/telegraf.conf ${D}${sysconfdir}/telegraf/
