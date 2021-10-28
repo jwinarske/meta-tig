@@ -184,7 +184,7 @@ SYSTEMD_SERVICE:${PN} = "${PN}.service"
 #   we already inherited update-rc.d
 INITSCRIPT_PACKAGES = "${PN}"
 INITSCRIPT_NAME:${PN} = "${PN}"
-# script has a runlevel of: 99
+# script has a runlevel of: 93
 # starts in initlevels:     2 3 4 5
 # stops  in initlevels: 0 1         6
 INITSCRIPT_PARAMS:${PN} = "start 93 2 3 4 5 . stop 93 0 1 6 ."
