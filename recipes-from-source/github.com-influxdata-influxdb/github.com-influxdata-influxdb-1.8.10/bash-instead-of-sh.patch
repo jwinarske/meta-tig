@@ -1,0 +1,10 @@
+Index: github.com-influxdata-influxdb-1.8.10/src/github.com/influxdata/influxdb/scripts/ci/run_perftest.sh
+===================================================================
+--- github.com-influxdata-influxdb-1.8.10.orig/src/github.com/influxdata/influxdb/scripts/ci/run_perftest.sh
++++ github.com-influxdata-influxdb-1.8.10/src/github.com/influxdata/influxdb/scripts/ci/run_perftest.sh
+@@ -1,4 +1,4 @@
+-#!/usr/bin/sh -ex
++#!/bin/bash -ex
+ 
+ # Install Telegraf
+ wget -qO- https://repos.influxdata.com/influxdb.key | apt-key add -
