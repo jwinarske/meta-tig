@@ -8,7 +8,11 @@ GOBUILDFLAGS:remove = "-buildmode=pie"
 inherit go go-mod python3native systemd
 BRANCH = "nobranch=1"
 
-SRC_URI = "git://github.com/influxdata/influxdb;${BRANCH};protocol=https;tag=v${PV};destsuffix=${BPN}-${PV}/src/${GO_IMPORT} \
+SRCREV = "12892eb5f8e8f5cd94197d914a040128c359ad41"
+
+#SRC_URI = "git://github.com/influxdata/influxdb;${BRANCH};protocol=https;tag=v${PV};destsuffix=${BPN}-${PV}/src/${GO_IMPORT}
+
+SRC_URI = "git://github.com/influxdata/influxdb;${BRANCH};protocol=https;destsuffix=${BPN}-${PV}/src/${GO_IMPORT} \
            file://influxdb.service \
            file://influxdb.conf \
 "
