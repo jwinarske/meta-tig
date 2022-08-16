@@ -77,6 +77,7 @@ do_install() {
     # arm has a bin dir
     if [ -d ${S}/usr/bin/ ]; then
     install -m 0755 ${S}/usr/bin/* ${D}${bindir}/
+    # */
     else
     # x86-64 does not
     install -m 0755 ${S}/influx ${D}${bindir}/
@@ -155,6 +156,7 @@ do_install() {
     # /usr/share - man pages
     install -d ${D}${datadir}/man/man1
     install -m 0644 ${S}/usr/share/man/man1/* ${D}${datadir}/man/man1/
+    # */
 
     # we need /var/lib/influxdb u:influxdb/g:influxdb
     mkdir -p ${D}${localstatedir}/lib/influxdb
