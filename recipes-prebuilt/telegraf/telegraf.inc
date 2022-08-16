@@ -91,6 +91,7 @@ do_install() {
     if [ -d ${S}/usr/lib ]; then
       # only for armv7 - in older versions?
 
+      # --> sysvinit
       # Only install the script if 'sysvinit' is in DISTRO_FEATURES
       # systemd would be the other choice
       if ${@bb.utils.contains('DISTRO_FEATURES','sysvinit','true','false',d)}; then
@@ -100,13 +101,20 @@ do_install() {
           sed -i 's,SIGTERM, TERM,g' ${S}/usr/lib/telegraf/scripts/init.sh
           # SIGHUP -> HUP
           sed -i 's,SIGHUP, HUP,g' ${S}/usr/lib/telegraf/scripts/init.sh
+
+          # --> let's try a hack to fix permissions on /var/log/telegraf/telegraf.log
+          sed -i '/log_success_msg "Starting the process" "$name"/a \ \n \t# --> try to fix permissions on /var/log/telegraf/telegraf.log\n\ \tif [[ ! -f /var/log/telegraf/telegraf.log ]]; then\n\ \t   touch /var/log/telegraf/telegraf.log\n\ \t   chown telegraf:telegraf /var/log/telegraf/telegraf.log\n\ \tfi\n\ \t# <-- try to fix permissions on /var/log/telegraf/telegraf.log\n' ${S}/usr/lib/telegraf/scripts/init.sh
+          # <-- let's try a hack to fix permissions on /var/log/telegraf/telegraf.log
+
           install -D -m 0755 ${S}/usr/lib/telegraf/scripts/init.sh ${D}${sysconfdir}/init.d/telegraf
 
           # volatile log files
           install -d ${D}${sysconfdir}/default/volatiles
           install -m 644 ${WORKDIR}/volatiles.99_telegraf ${D}${sysconfdir}/default/volatiles/99_telegraf
       fi
+      # <-- sysvinit
 
+      # --> systemd
       # Only install the script if 'systemd' is in DISTRO_FEATURES
       # systemd
       if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd','true','false',d)}; then
@@ -148,6 +156,7 @@ do_install() {
           install -d ${D}${sysconfdir}/tmpfiles.d
           install -m 644 ${WORKDIR}/volatiles.telegraf.conf ${D}${sysconfdir}/tmpfiles.d/telegraf.conf
       fi
+      # <-- systemd
     fi # -d ${S}/usr/lib
 
     # /var - for /var/log/telegraf/telegraf.log
