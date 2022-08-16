@@ -18,6 +18,9 @@ SRCREV = "ac5c7f6a1a7402b6825857939fb02014300cb16a"
 SRC_URI = "\
            git://github.com/influxdata/telegraf;${BRANCH};protocol=https;destsuffix=${BPN}-${PV}/src/${GO_IMPORT} \
           "
+
+SRC_URI:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://volatiles.telegraf.conf', 'file://volatiles.99_telegraf', d)}"
+
 # We need go-native for ${GO} underneath
 # I thought that "inherit go" would take care about it
 # but apparently it does not
@@ -92,7 +95,20 @@ do_install:append() {
 	   # not sure we always have bash, so we replace it with /bin/sh
 	   # please note, that below we created a telegraf user/group for this to work
            sed -i 's,#! /usr/bin/env bash,#! /bin/sh,g' ${SRC_ROOT}/scripts/init.sh
+           # SIGTERM -> TERM
+           sed -i 's,SIGTERM, TERM,g' ${SRC_ROOT}/scripts/init.sh
+           # SIGHUP -> HUP
+           sed -i 's,SIGHUP, HUP,g' ${SRC_ROOT}/scripts/init.sh
+
+           # --> let's try a hack to fix permissions on /var/log/telegraf/telegraf.log
+          sed -i '/log_success_msg "Starting the process" "$name"/a \ \n \t# --> try to fix permissions on /var/log/telegraf/telegraf.log\n\ \tif [[ ! -f /var/log/telegraf/telegraf.log ]]; then\n\ \t   touch /var/log/telegraf/telegraf.log\n\ \t   chown telegraf:telegraf /var/log/telegraf/telegraf.log\n\ \tfi\n\ \t# <-- try to fix permissions on /var/log/telegraf/telegraf.log\n' ${SRC_ROOT}/scripts/init.sh
+           # <-- let's try a hack to fix permissions on /var/log/telegraf/telegraf.log
+
            install -D -m 0755 ${SRC_ROOT}/scripts/init.sh ${D}${sysconfdir}/init.d/telegraf
+
+           # volatile log files
+           install -d ${D}${sysconfdir}/default/volatiles
+           install -m 644 ${WORKDIR}/volatiles.99_telegraf ${D}${sysconfdir}/default/volatiles/99_telegraf
     	fi
 	#  <-- sysvinit
 
@@ -103,11 +119,15 @@ do_install:append() {
            install -d ${D}${systemd_unitdir}/system
 	   # please note, that below we created a telegraf user/group for this to work
            install -m 0644 ${SRC_ROOT}/scripts/telegraf.service ${D}${systemd_unitdir}/system/telegraf.service
+
+           # volatile log files
+           install -d ${D}${sysconfdir}/tmpfiles.d
+           install -m 644 ${WORKDIR}/volatiles.telegraf.conf ${D}${sysconfdir}/tmpfiles.d/telegraf.conf
         fi
 	# <-- systemd 
 
 	# /var - for /var/log/telegraf/telegraf.log
-    	install -d ${D}${localstatedir}/log/telegraf
+    	#install -d ${D}${localstatedir}/log/telegraf
 
 # ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/docker/libnetwork@at@v0.8.0-dev.2.0.20181012153825-d7b61745d166/cmd/ssd/ssd.py contained in package github.com-influxdata-telegraf-staticdev requires /usr/bin/python, but no providers found in RDEPENDS:github.com-influxdata-telegraf-staticdev? [file-rdeps]
 
@@ -121,6 +141,11 @@ do_install:append() {
         # .there seems to be even a meta layer for it
         # .but currently I don't plan to support it, so remove references to it
         rm -rf ${D}${libdir}/go/pkg/mod/github.com/docker/docker@v17.12.0-ce-rc1.0.20200916142827-bd33bbf0497b+incompatible/contrib/init/openrc
+
+# ERROR: github.com-influxdata-telegraf-1.18.0-r0 do_package_qa: QA Issue: /usr/lib/go/pkg/mod/github.com/apache/thrift@at@v0.12.0/lib/netcore/Tests/Thrift.PublicInterfaces.Compile.Tests/CassandraTest.thrift contained in package github.com-influxdata-telegraf-staticdev requires /usr/local/bin/thrift, but no providers found in RDEPENDS:github.com-influxdata-telegraf-staticdev? [file-rdeps]
+
+       # let's try to remove the testcase
+       rm -rf ${D}${libdir}/go/pkg/mod/github.com/apache/thrift@v0.12.0/lib/netcore/Tests/Thrift.PublicInterfaces.Compile.Tests/CassandraTest.thrift
 }
 
 # fix a qa issue:
